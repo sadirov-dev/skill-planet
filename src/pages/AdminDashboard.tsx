@@ -1,0 +1,314 @@
+import React, { useState } from 'react';
+import { Users, BookOpen, DollarSign, TrendingUp, ShieldCheck, ShieldX, CheckCircle, XCircle, Search, Filter, Activity, GraduationCap, UserCheck, AlertTriangle, PhoneCall, Code2, Mail, MessageSquare, Send } from 'lucide-react';
+import { mockUsers, mockCourses, mockTeachers, mockActivityLogs, platformStats } from '../data/mock';
+
+interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
+
+const stats = [
+  { label: 'Всего пользователей', value: '28,400', change: '+342 за неделю', color: '#60a5fa', icon: Users },
+  { label: 'Активных курсов', value: '148', change: '+8 за месяц', color: '#a78bfa', icon: BookOpen },
+  { label: 'Общий доход платформы', value: '86 703 125 сом ($968,750)', change: '+23% за месяц', color: '#34d399', icon: DollarSign },
+  { label: 'Средний рейтинг', value: '4.8', change: '↑ 0.1 за квартал', color: '#fbbf24', icon: TrendingUp },
+];
+
+export default function AdminDashboard({ theme, onNavigate }: Props) {
+  const [tab, setTab] = useState<'analytics' | 'students' | 'teachers' | 'admins' | 'approvals' | 'support'>('analytics');
+  const [search, setSearch] = useState('');
+  const [banned, setBanned] = useState<Set<string>>(new Set());
+  const [verified, setVerified] = useState<Set<string>>(new Set(['u1', 'u2', 'u5', 'u8']));
+  const [supportMessage, setSupportMessage] = useState('');
+  const [supportSent, setSupportSent] = useState(false);
+
+  const dark = theme === 'dark';
+
+  const studentsList = mockUsers.filter(u => u.role === 'student' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));
+  const teachersList = mockUsers.filter(u => u.role === 'teacher' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));
+  const adminsList = mockUsers.filter(u => u.role === 'admin' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));
+
+  const handleSendSupport = () => {
+    if (!supportMessage.trim()) return;
+    setSupportSent(true);
+    setTimeout(() => {
+      setSupportMessage('');
+      setSupportSent(false);
+    }, 2500);
+  };
+
+  return (
+    <div className="dash-wrap" style={{ background: dark ? '#09090b' : '#f8fafc' }}>
+      <div className="dash-content">
+        <div>
+          <span className="section-label">🛡️ Кабинет Главного Администратора</span>
+          <h1 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-0.03em', color: dark ? '#f4f4f5' : '#0f172a', marginTop: 4 }}>
+            Центр Управления Платформой
+          </h1>
+          <p style={{ fontSize: 13, color: dark ? '#71717a' : '#64748b', marginTop: 2 }}>
+            Полный контроль пользователей, аналитики, списков учителей/учеников и обращений к разработчикам
+          </p>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="tabs" style={{ flexWrap: 'wrap' }}>
+          <button className={`tab ${tab === 'analytics' ? 'active' : ''}`} onClick={() => setTab('analytics')}>📊 Аналитика</button>
+          <button className={`tab ${tab === 'students' ? 'active' : ''}`} onClick={() => setTab('students')}>🎓 Список Учеников ({studentsList.length})</button>
+          <button className={`tab ${tab === 'teachers' ? 'active' : ''}`} onClick={() => setTab('teachers')}>👨‍🏫 Список Учителей ({teachersList.length})</button>
+          <button className={`tab ${tab === 'admins' ? 'active' : ''}`} onClick={() => setTab('admins')}>🛡️ Администраторы ({adminsList.length})</button>
+          <button className={`tab ${tab === 'approvals' ? 'active' : ''}`} onClick={() => setTab('approvals')}>⚡ Модерация курсов (1)</button>
+          <button className={`tab ${tab === 'support' ? 'active' : ''}`} onClick={() => setTab('support')}>📞 Связь с разработчиком</button>
+        </div>
+
+        {/* Tab 1: Global Analytics */}
+        {tab === 'analytics' && (
+          <>
+            <div className="grid-4">
+              {stats.map((s, i) => {
+                const Icon = s.icon;
+                return (
+                  <div key={i} className="card stat-card">
+                    <div className="stat-card__icon" style={{ background: s.color + '15', border: `1px solid ${s.color}30` }}>
+                      <Icon size={18} color={s.color} />
+                    </div>
+                    <div className="stat-card__value" style={{ color: dark ? '#f4f4f5' : '#0f172a' }}>{s.value}</div>
+                    <div className="stat-card__label">{s.label}</div>
+                    <div className="stat-card__change" style={{ color: s.color }}>{s.change}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Growth Chart */}
+            <div className="card" style={{ padding: 24 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 20 }}>
+                Динамика посещений и активности платформы (Июль 2026)
+              </h3>
+              <div style={{ height: 160, display: 'flex', alignItems: 'flex-end', gap: 6, paddingBottom: 10 }}>
+                {[45, 60, 52, 78, 90, 65, 84, 92, 70, 88, 95, 100, 82, 91, 88, 96, 75, 89, 94, 98, 88, 92, 96, 100].map((h, i) => (
+                  <div key={i} className="chart-bar" style={{ height: `${h}%` }} title={`День ${i+1}: ${h * 3} активных`} />
+                ))}
+              </div>
+              <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: 11, color: '#71717a', paddingTop: 10, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}>
+                <span>1 июля</span>
+                <span>Июль 2026</span>
+                <span>30 июля</span>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Tab 2: Students List */}
+        {tab === 'students' && (
+          <div className="card" style={{ padding: 20 }}>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#71717a' }} />
+                <input className="input" placeholder="Поиск среди учеников..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 36 }} />
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th>Студент</th>
+                    <th>Баллы (XP)</th>
+                    <th>Дата регистрации</th>
+                    <th>Статус верификации</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentsList.map(u => {
+                    const isBanned = banned.has(u.id);
+                    const isVer = verified.has(u.id);
+                    return (
+                      <tr key={u.id} style={{ opacity: isBanned ? 0.4 : 1 }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <img src={u.avatar || '/images/avatar_teacher2.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                            <div>
+                              <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
+                              <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><strong style={{ color: '#60a5fa' }}>{u.xp || 1200} XP</strong></td>
+                        <td style={{ color: '#71717a', fontSize: 12 }}>{u.joinedAt}</td>
+                        <td>
+                          {isVer ? <span className="badge badge-green"><CheckCircle size={10} /> Подтверждён</span> : <span className="badge badge-white">Обычный</span>}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button className="btn btn-sm btn-ghost" onClick={() => setVerified(p => { const n = new Set(p); n.has(u.id) ? n.delete(u.id) : n.add(u.id); return n; })}>
+                              <ShieldCheck size={13} color={isVer ? '#34d399' : '#71717a'} />
+                            </button>
+                            <button className="btn btn-sm btn-danger" onClick={() => setBanned(p => { const n = new Set(p); n.has(u.id) ? n.delete(u.id) : n.add(u.id); return n; })}>
+                              <ShieldX size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 3: Teachers List by Subject Directions */}
+        {tab === 'teachers' && (
+          <div className="card" style={{ padding: 20 }}>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
+              <div style={{ flex: 1, position: 'relative' }}>
+                <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#71717a' }} />
+                <input className="input" placeholder="Поиск среди преподавателей по предметам..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft: 36 }} />
+              </div>
+            </div>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th>Преподаватель</th>
+                    <th>Направление / Дисциплина</th>
+                    <th>Рейтинг</th>
+                    <th>Верификация</th>
+                    <th>Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {teachersList.map(u => {
+                    const isBanned = banned.has(u.id);
+                    const isVer = verified.has(u.id);
+                    return (
+                      <tr key={u.id} style={{ opacity: isBanned ? 0.4 : 1 }}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <img src={u.avatar || '/images/avatar_teacher1.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                            <div>
+                              <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
+                              <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span className="badge badge-violet">{u.subject || 'IT & AI / Языки'}</span></td>
+                        <td>★ 4.9 (1,200+ студентов)</td>
+                        <td>
+                          {isVer ? <span className="badge badge-green"><CheckCircle size={10} /> Подтверждён</span> : <span className="badge badge-amber">Ожидает проверки</span>}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 6 }}>
+                            <button className="btn btn-sm btn-ghost" onClick={() => setVerified(p => { const n = new Set(p); n.has(u.id) ? n.delete(u.id) : n.add(u.id); return n; })}>
+                              <ShieldCheck size={13} color={isVer ? '#34d399' : '#71717a'} />
+                            </button>
+                            <button className="btn btn-sm btn-danger" onClick={() => setBanned(p => { const n = new Set(p); n.has(u.id) ? n.delete(u.id) : n.add(u.id); return n; })}>
+                              <ShieldX size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 4: Admins List */}
+        {tab === 'admins' && (
+          <div className="card" style={{ padding: 20 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 16 }}>
+              🛡️ Список Администраторов Платформы
+            </h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th>Администратор</th>
+                    <th>Роль</th>
+                    <th>Дата присоединения</th>
+                    <th>Доступ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adminsList.map(u => (
+                    <tr key={u.id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <img src={u.avatar || '/images/avatar_teacher3.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                          <div>
+                            <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
+                            <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span className="badge badge-amber">Super Admin</span></td>
+                      <td style={{ color: '#71717a', fontSize: 12 }}>{u.joinedAt}</td>
+                      <td><span className="badge badge-green">Полный доступ</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 5: Approvals */}
+        {tab === 'approvals' && (
+          <div className="grid-1">
+            <div className="card" style={{ padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <img src="/images/course_go.png" alt="" style={{ width: 64, height: 48, borderRadius: 10, objectFit: 'cover' }} />
+                <div>
+                  <h3 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Go: Стратегическое мышление</h3>
+                  <div style={{ fontSize: 12, color: dark ? '#71717a' : '#64748b', marginTop: 2 }}>Санжар Тошматов · Шахматы / Игра Го</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-sm btn-success"><CheckCircle size={13} /> Одобрить</button>
+                <button className="btn btn-sm btn-danger"><XCircle size={13} /> Отклонить</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab 6: Contact Developer & Tech Support */}
+        {tab === 'support' && (
+          <div className="card" style={{ padding: 28, maxWidth: 640 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Code2 size={22} color="#60a5fa" />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 18, fontWeight: 900, color: dark ? '#f4f4f5' : '#0f172a' }}>Связаться с Разработчиком</h3>
+                <p style={{ fontSize: 13, color: dark ? '#71717a' : '#64748b' }}>Прямой канал технической поддержки платформы SkillPlanet</p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#71717a', display: 'block', marginBottom: 4 }}>Тема обращения / Баг-репорт</label>
+                <input className="input" placeholder="Например: Запрос на обновление модуля аналитики..." />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#71717a', display: 'block', marginBottom: 4 }}>Сообщение для команды разработки</label>
+                <textarea className="input" rows={4} value={supportMessage} onChange={e => setSupportMessage(e.target.value)} placeholder="Опишите ваши технические пожелания или вопросы..." />
+              </div>
+
+              {supportSent ? (
+                <div style={{ padding: 14, borderRadius: 12, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#34d399', fontSize: 13, fontWeight: 700, textAlign: 'center' }}>
+                  ✓ Сообщение успешно отправлено ведущему разработчику!
+                </div>
+              ) : (
+                <button className="btn btn-lg btn-primary" onClick={handleSendSupport}>
+                  <Send size={16} /> Отправить сообщение разработчику
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
