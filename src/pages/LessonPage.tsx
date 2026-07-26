@@ -35,7 +35,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
     setAiLoading(true);
 
     try {
-      const reply = await askAiAssistant(txt, course.title, selectedModel);
+      const reply = await askAiAssistant(txt, course.title, selectedModel, aiMsgs);
       setAiMsgs(p => [...p, { role: 'ai', text: reply }]);
     } catch {
       setAiMsgs(p => [...p, { role: 'ai', text: 'Ошибка сети при вызове ИИ.' }]);

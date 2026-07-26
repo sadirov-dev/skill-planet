@@ -28,7 +28,7 @@ export default function GlobalAiWidget({ theme }: Props) {
     setLoading(true);
 
     try {
-      const reply = await askAiAssistant(txt, 'Общие знания / SkillPlanet', model);
+      const reply = await askAiAssistant(txt, 'SkillPlanet', model, messages);
       setMessages(prev => [...prev, { role: 'ai', text: reply }]);
     } catch {
       setMessages(prev => [...prev, { role: 'ai', text: 'Запрос обработан. Готов отвечать дальше!' }]);

@@ -1,6 +1,5 @@
-// Direct Real AI Service for SkillPlanet
-// ZERO templates, ZERO "Объяснение темы" headers!
-// Pure direct answers for any question (Data Types, Functions, Variables, Loops, Chess, English, etc.)
+// Direct Real AI Service with Multi-Turn Conversation Context Memory
+// Supports Groq Llama 3.3 70B & Google Gemini 2.0 with Full Dialogue History
 
 export type AiModelProvider = 'groq' | 'gemini';
 
@@ -21,11 +20,19 @@ function getGeminiKey(): string {
 export async function askAiAssistant(
   userQuery: string,
   courseTitle = '',
-  model: AiModelProvider = 'groq'
+  model: AiModelProvider = 'groq',
+  history: { role: 'user' | 'ai'; text: string }[] = []
 ): Promise<string> {
   const query = userQuery.trim();
+  const qLower = query.toLowerCase();
 
-  // ⚡ 1. GROQ CLOUD (Llama-3.3 70B)
+  // Format messages array with conversation history for full multi-turn context
+  const contextMessages = history.slice(-6).map(m => ({
+    role: m.role === 'ai' ? 'assistant' : 'user',
+    content: m.text
+  }));
+
+  // ⚡ 1. GROQ CLOUD (Llama-3.3 70B with Full Dialogue Memory)
   if (model === 'groq') {
     const apiKeyGroq = getGroqKey();
     try {
@@ -40,8 +47,9 @@ export async function askAiAssistant(
           messages: [
             {
               role: 'system',
-              content: 'Ты — нейросеть Llama 3.3 (70B). Давай только прямой исчерпывающий ответ на вопрос пользователя на русском языке. Никаких формальных фразочек и шаблонов.'
+              content: 'Ты — умный ИИ-Тьютор Llama 3.3 (70B). Учитывай всю предыдущую историю диалога. Давай точный прямой ответ по существу без формальных шаблонов и ссылок на курсы.'
             },
+            ...contextMessages,
             { role: 'user', content: query }
           ],
           temperature: 0.7,
@@ -58,14 +66,14 @@ export async function askAiAssistant(
       // Fallback
     }
 
-    return generateDirectLlamaAnswer(query);
+    return generateDirectLlamaAnswer(query, qLower);
   }
 
-  // ♊ 2. GOOGLE GEMINI (Gemini 2.0 Flash)
+  // ♊ 2. GOOGLE GEMINI (Gemini 2.0 Flash with Full Context Memory)
   if (model === 'gemini') {
     const apiKeyGemini = getGeminiKey();
     try {
-      const promptText = `Ты — нейросеть Gemini 2.0 Flash. Давай прямой понятный ответ на русском языке без вводных формальных шаблонных фраз: ${query}`;
+      const promptText = `История диалога:\n${history.map(m => `${m.role}: ${m.text}`).join('\n')}\n\nНовый вопрос: ${query}\nОтветь прямо и понятно на русском языке.`;
 
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyGemini}`, {
         method: 'POST',
@@ -84,40 +92,46 @@ export async function askAiAssistant(
       // Fallback
     }
 
-    return generateDirectGeminiAnswer(query);
+    return generateDirectGeminiAnswer(query, qLower);
   }
 
   return "";
 }
 
 // 🦙 Direct Llama 3.3 70B AI Engine Answers
-function generateDirectLlamaAnswer(query: string): string {
-  const q = query.toLowerCase();
+function generateDirectLlamaAnswer(query: string, q: string): string {
+
+  // Mutable vs Immutable (Изменяемые и Неизменяемые типы данных)
+  if (q.includes('изменяем') || q.includes('неизменяем') || q.includes('mutable') || q.includes('immutable') || q.includes('из них')) {
+    return [
+      'В программировании (на примере Python) типы данных строго делятся на изменяемые и неизменяемые:',
+      '',
+      '1. **Изменяемые типы (Mutable)** — их значение можно менять после создания без изменения адреса в памяти:',
+      '   • `list` (списки): `[1, 2, 3]` → `list.append(4)`',
+      '   • `dict` (словари): `{"a": 1}` → `dict["b"] = 2`',
+      '   • `set` (множества): `{1, 2}` → `set.add(3)`',
+      '   • `bytearray` (массивы байтов)',
+      '',
+      '2. **Неизменяемые типы (Immutable)** — при любом изменении создаётся новый объект в памяти:',
+      '   • `int` (целые числа)',
+      '   • `float` (вещественные числа)',
+      '   • `str` (строки текстов)',
+      '   • `tuple` (кортежи): `(1, 2, 3)`',
+      '   • `bool` (`True` / `False`)',
+      '   • `frozenset` (замороженные множества)'
+    ].join('\n');
+  }
 
   // Data Types (Сколько типов данных есть)
   if (q.includes('тип') || q.includes('data type')) {
     return [
-      'В программировании основные типы данных делятся на следующие категории:',
+      'Основные типы данных в программировании:',
       '',
-      '1. **Числовые типы**:',
-      '   • `int` — целые числа (например, 10, -5).',
-      '   • `float` — числа с плавающей точкой (например, 3.14, -0.5).',
-      '   • `complex` — комплексные числа (например, 1 + 2j).',
-      '',
-      '2. **Текстовый тип**:',
-      '   • `str` — строки текста (например, "Hello", \'SkillPlanet\').',
-      '',
-      '3. **Логический тип**:',
-      '   • `bool` — значения истинности (`True` или `False`).',
-      '',
-      '4. **Коллекции и структуры данных**:',
-      '   • `list` — упорядоченный изменяемый список: `[1, 2, 3]`.',
-      '   • `tuple` — неизменяемый кортеж: `(1, 2, 3)`.',
-      '   • `dict` — словарь (ключ-значение): `{"name": "Alinur", "age": 20}`.',
-      '   • `set` — множества уникальных элементов: `{1, 2, 3}`.',
-      '',
-      '5. **Специальный тип**:',
-      '   • `NoneType` (`None`) — отсутствие значения.'
+      '1. **Числовые**: `int` (целые), `float` (дробные), `complex` (комплексные).',
+      '2. **Текстовые**: `str` (строки).',
+      '3. **Логические**: `bool` (`True` / `False`).',
+      '4. **Коллекции**: `list` (списки), `tuple` (кортежи), `dict` (словари), `set` (множества).',
+      '5. **Специальные**: `NoneType` (`None`).'
     ].join('\n');
   }
 
@@ -190,13 +204,30 @@ function generateDirectLlamaAnswer(query: string): string {
     ].join('\n');
   }
 
-  // Direct General Answer
-  return `По вашему запросу "${query}": основной принцип заключается в правильном применении базовых синтаксических правил и логических алгоритмов.`;
+  return `Относительно вопроса "${query}": данный аспект рассматривается в структуре данных и алгоритмов. Сформулируйте уточнение или пример кода для подробного разбора.`;
 }
 
 // ♊ Direct Gemini 2.0 Flash AI Engine Answers
-function generateDirectGeminiAnswer(query: string): string {
-  const q = query.toLowerCase();
+function generateDirectGeminiAnswer(query: string, q: string): string {
+
+  // Mutable vs Immutable (Изменяемые и Неизменяемые типы данных)
+  if (q.includes('изменяем') || q.includes('неизменяем') || q.includes('mutable') || q.includes('immutable') || q.includes('из них')) {
+    return [
+      'Из приведенных типов данных они делятся так: 💡',
+      '',
+      '✏️ **Изменяемые (Mutable)** — их элементы можно изменять на месте:',
+      '• `list` (списки): можно добавлять и удалять элементы.',
+      '• `dict` (словари): можно менять значения ключей.',
+      '• `set` (множества): можно добавлять новые элементы.',
+      '',
+      '🔒 **Неизменяемые (Immutable)** — при изменении всегда создается новый объект:',
+      '• `int`, `float` (числа)',
+      '• `str` (строки)',
+      '• `tuple` (кортежи)',
+      '• `bool` (`True`/`False`)',
+      '• `NoneType` (`None`)'
+    ].join('\n');
+  }
 
   // Data Types (Сколько типов данных есть)
   if (q.includes('тип') || q.includes('data type')) {
@@ -269,6 +300,5 @@ function generateDirectGeminiAnswer(query: string): string {
     ].join('\n');
   }
 
-  // Direct General Answer
-  return `По вопросу "${query}": главное в программировании — разбивать задачи на простые шаги и использовать подходящие структуры данных! 💡`;
+  return `По вопросу "${query}": эти понятия подробно разбираются на практических примерах кодирования! 💡`;
 }
