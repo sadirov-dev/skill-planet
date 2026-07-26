@@ -321,14 +321,37 @@ body.light .stripe { background:linear-gradient(90deg,transparent,rgba(0,0,0,.08
   }
   .grid-4 { grid-template-columns:repeat(2,1fr); }
   .grid-3 { grid-template-columns:repeat(2,1fr); }
-  .lesson-ai { display:none; }
   .dash-wrap { padding-bottom: 96px; }
+
+  /* Mobile Fullscreen Sidebars for Lesson Page */
+  .lesson-sidebar {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    z-index: 120;
+    width: 100% !important;
+    background: rgba(13, 13, 18, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .lesson-ai {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    z-index: 120;
+    width: 100% !important;
+    background: rgba(13, 13, 18, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
 }
 
 @media(max-width:768px) {
   .grid-4, .grid-3, .grid-2 { grid-template-columns:1fr; }
-  .lesson-sidebar { display:none; }
-  .lesson-sidebar.open { display:flex; flex-direction:column; position:fixed; inset:56px 0 96px 0; z-index:100; width:100%; }
   .stat-card__value { font-size:22px; }
   .dash-content { padding:14px 12px; }
   .btn-xl { padding:12px 22px; font-size:14px; }

@@ -9,7 +9,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   const course = mockCourses[0];
   const [activeLesson, setActiveLesson] = useState('l3');
   const [completed, setCompleted] = useState<Set<string>>(new Set(['l1', 'l2']));
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [aiInput, setAiInput] = useState('');
   const [aiMsgs, setAiMsgs] = useState<{ role: 'user' | 'ai'; text: string }[]>([
@@ -30,7 +30,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
     setAiInput('');
     setAiMsgs(p => [...p, { role: 'user', text: txt }]);
     setTimeout(() => {
-      setAiMsgs(p => [...p, { role: 'ai', text: `В Python отступы (4 пробела) определяют блок кода. Для объвления функций используем def, а len() возвращает целое число (int).` }]);
+      setAiMsgs(p => [...p, { role: 'ai', text: `В Python отступы (4 пробела) определяют блок кода. Для объявления функций используем def, а len() возвращает целое число (int).` }]);
     }, 600);
   };
 
@@ -46,44 +46,51 @@ export default function LessonPage({ theme, onNavigate }: Props) {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: dark ? '#09090b' : '#f8fafc' }}>
-      {/* Top Bar */}
-      <div style={{ height: 48, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', background: dark ? '#0d0d12' : '#fff' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <button className="btn btn-sm btn-ghost" onClick={() => onNavigate('student-dashboard')} style={{ padding: '4px 10px', fontSize: 12 }}>
-            <ChevronLeft size={14} /> Кабинет
+      {/* Clean Mobile-Responsive Top Bar */}
+      <div style={{ height: 50, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px', background: dark ? '#0d0d12' : '#fff', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+          <button className="btn btn-sm btn-ghost" onClick={() => onNavigate('student-dashboard')} style={{ padding: '6px 10px', fontSize: 12, flexShrink: 0 }}>
+            <ChevronLeft size={14} /> <span className="hidden sm:inline">Кабинет</span>
           </button>
-          <span style={{ fontSize: 13, fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{course.title}</span>
+          <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} className="hidden md:inline">
+            {course.title}
+          </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button className="btn btn-sm btn-ghost" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <BookOpen size={14} /> Список Уроков
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <button className={`btn btn-sm ${sidebarOpen ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setSidebarOpen(!sidebarOpen); if (aiOpen) setAiOpen(false); }} style={{ padding: '6px 10px', fontSize: 12 }}>
+            <BookOpen size={14} /> <span className="hidden sm:inline">Уроки</span>
           </button>
-          <button className="btn btn-sm btn-primary" onClick={() => setAiOpen(!aiOpen)} style={{ padding: '6px 14px' }}>
-            <Bot size={14} /> AI Помощник
+          <button className={`btn btn-sm ${aiOpen ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setAiOpen(!aiOpen); if (sidebarOpen) setSidebarOpen(false); }} style={{ padding: '6px 10px', fontSize: 12 }}>
+            <Bot size={14} /> <span className="hidden sm:inline">AI Помощник</span>
           </button>
         </div>
       </div>
 
       {/* Main Workspace */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', position: 'relative' }}>
 
-        {/* Sidebar */}
+        {/* Sidebar Program Overlay */}
         {sidebarOpen && (
           <div className="lesson-sidebar">
-            <div style={{ padding: 16, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}` }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Программа и Тесты</div>
-              <div className="prog-track" style={{ marginTop: 8 }}>
-                <div className="prog-fill" style={{ width: `${Math.round((completed.size / allLessons.length) * 100)}%` }} />
+            <div style={{ padding: 16, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Программа и Тесты</div>
+                <div className="prog-track" style={{ marginTop: 6, width: 140 }}>
+                  <div className="prog-fill" style={{ width: `${Math.round((completed.size / allLessons.length) * 100)}%` }} />
+                </div>
               </div>
+              <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}>
+                <X size={16} />
+              </button>
             </div>
             <div style={{ padding: 8 }}>
               {course.curriculum.map(mod => (
                 <div key={mod.id} style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#71717a', padding: '6px 10px', textTransform: 'uppercase' }}>{mod.title}</div>
                   {mod.lessons.map(l => (
-                    <div key={l.id} onClick={() => { setActiveLesson(l.id); setQuizSubmitted(false); }} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 9, cursor: 'pointer', background: l.id === activeLesson ? 'rgba(59,130,246,0.15)' : 'transparent', color: l.id === activeLesson ? '#60a5fa' : dark ? '#a1a1aa' : '#475569', fontSize: 12, fontWeight: 600 }}>
-                      {completed.has(l.id) ? <CheckCircle size={14} color="#34d399" /> : l.type === 'quiz' ? <HelpCircle size={14} color="#fbbf24" /> : <Circle size={14} color="#52525b" />}
+                    <div key={l.id} onClick={() => { setActiveLesson(l.id); setQuizSubmitted(false); setSidebarOpen(false); }} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, cursor: 'pointer', background: l.id === activeLesson ? 'rgba(59,130,246,0.15)' : 'transparent', color: l.id === activeLesson ? '#60a5fa' : dark ? '#a1a1aa' : '#475569', fontSize: 13, fontWeight: 600 }}>
+                      {completed.has(l.id) ? <CheckCircle size={15} color="#34d399" /> : l.type === 'quiz' ? <HelpCircle size={15} color="#fbbf24" /> : <Circle size={15} color="#52525b" />}
                       <span style={{ flex: 1 }}>{l.title}</span>
                     </div>
                   ))}
@@ -94,27 +101,27 @@ export default function LessonPage({ theme, onNavigate }: Props) {
         )}
 
         {/* Lesson Main Content */}
-        <div className="lesson-main" style={{ padding: 24 }}>
-          <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="lesson-main" style={{ padding: '16px 14px', paddingBottom: 80 }}>
+          <div style={{ maxWidth: 800, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
             {curLesson.type === 'quiz' && curLesson.quiz ? (
               /* Interactive Quiz Interface */
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                  <span className="badge badge-amber" style={{ fontSize: 12, padding: '6px 14px' }}>
-                    <HelpCircle size={14} /> Интерактивный Тестирование
+              <div className="card" style={{ padding: '20px 16px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <span className="badge badge-amber" style={{ fontSize: 11, padding: '4px 12px' }}>
+                    <HelpCircle size={13} /> Интерактивное Тестирование
                   </span>
-                  <span style={{ fontSize: 12, color: '#71717a' }}>+150 XP за успешное прохождение</span>
+                  <span style={{ fontSize: 12, color: '#71717a' }}>+150 XP за победу</span>
                 </div>
 
-                <h2 style={{ fontSize: 22, fontWeight: 900, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 20 }}>
+                <h2 style={{ fontSize: 'clamp(18px,3.5vw,22px)', fontWeight: 900, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 16 }}>
                   {curLesson.title}
                 </h2>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {curLesson.quiz.map((q, qIdx) => (
-                    <div key={q.id} style={{ padding: 18, borderRadius: 14, background: dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 14 }}>
+                    <div key={q.id} style={{ padding: 14, borderRadius: 14, background: dark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', border: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 12 }}>
                         {qIdx + 1}. {q.question}
                       </div>
 
@@ -149,7 +156,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                               key={optIdx}
                               onClick={() => handleSelectQuizOption(q.id, optIdx)}
                               style={{
-                                padding: '12px 16px', borderRadius: 11, border: `1px solid ${border}`,
+                                padding: '10px 14px', borderRadius: 11, border: `1px solid ${border}`,
                                 background: bg, color: color, fontSize: 13, fontWeight: 600,
                                 textAlign: 'left', cursor: quizSubmitted ? 'default' : 'pointer',
                                 transition: 'all 0.15s', fontFamily: 'inherit',
@@ -166,14 +173,14 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                   ))}
 
                   {!quizSubmitted ? (
-                    <button className="btn btn-lg btn-primary" onClick={handleCalculateScore} style={{ marginTop: 8 }}>
+                    <button className="btn btn-lg btn-primary" onClick={handleCalculateScore} style={{ marginTop: 8, width: '100%' }}>
                       Завершить тест и получить баллы <Award size={18} />
                     </button>
                   ) : (
-                    <div style={{ padding: 18, borderRadius: 14, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', textAlign: 'center' }}>
-                      <Award size={32} color="#34d399" style={{ margin: '0 auto 8px' }} />
-                      <h3 style={{ fontSize: 18, fontWeight: 900, color: '#34d399' }}>Тест успешно сдан! 🎉</h3>
-                      <p style={{ fontSize: 13, color: '#a1a1aa', marginTop: 4 }}>+150 XP добавлено в твой профиль. Урок отмечен пройденным!</p>
+                    <div style={{ padding: 16, borderRadius: 14, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', textAlign: 'center' }}>
+                      <Award size={28} color="#34d399" style={{ margin: '0 auto 6px' }} />
+                      <h3 style={{ fontSize: 16, fontWeight: 900, color: '#34d399' }}>Тест успешно сдан! 🎉</h3>
+                      <p style={{ fontSize: 12, color: '#a1a1aa', marginTop: 4 }}>+150 XP добавлено в твой профиль. Урок отмечен пройденным!</p>
                     </div>
                   )}
                 </div>
@@ -184,20 +191,20 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                 {/* Video Player */}
                 <div className="video-bg" style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                   <img src="/images/course_python.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
-                  <div style={{ position: 'absolute', textAlign: 'center' }}>
-                    <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 0 40px rgba(59,130,246,0.5)', cursor: 'pointer' }}>
-                      <Play size={26} fill="#fff" color="#fff" style={{ marginLeft: 3 }} />
+                  <div style={{ position: 'absolute', textAlign: 'center', padding: '0 12px' }}>
+                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', boxShadow: '0 0 40px rgba(59,130,246,0.5)', cursor: 'pointer' }}>
+                      <Play size={24} fill="#fff" color="#fff" style={{ marginLeft: 3 }} />
                     </div>
-                    <h3 style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>{curLesson.title}</h3>
-                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 4 }}>Воспроизведение урока ({curLesson.duration})</p>
+                    <h3 style={{ fontSize: 'clamp(14px,3vw,18px)', fontWeight: 800, color: '#fff' }}>{curLesson.title}</h3>
+                    <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>Воспроизведение урока ({curLesson.duration})</p>
                   </div>
                 </div>
 
                 {/* Lesson Title & Checkmark */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <span className="badge badge-blue">Видеоурок</span>
-                    <h1 style={{ fontSize: 22, fontWeight: 900, color: dark ? '#f4f4f5' : '#0f172a', marginTop: 4 }}>{curLesson.title}</h1>
+                    <h1 style={{ fontSize: 'clamp(18px,3.5vw,22px)', fontWeight: 900, color: dark ? '#f4f4f5' : '#0f172a', marginTop: 4 }}>{curLesson.title}</h1>
                   </div>
                   <button className={`btn btn-md ${completed.has(curLesson.id) ? 'btn-success' : 'btn-ghost'}`} onClick={() => setCompleted(p => { const n = new Set(p); n.has(curLesson.id) ? n.delete(curLesson.id) : n.add(curLesson.id); return n; })}>
                     <CheckCircle size={15} /> {completed.has(curLesson.id) ? 'Урок пройден' : 'Отметить пройденным'}
@@ -205,9 +212,9 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                 </div>
 
                 {/* Code / Markdown Content */}
-                <div className="card" style={{ padding: 24 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 12 }}>Конспект урока</h3>
-                  <p style={{ fontSize: 14, color: dark ? '#a1a1aa' : '#475569', lineHeight: 1.6, marginBottom: 16 }}>
+                <div className="card" style={{ padding: 18 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 10 }}>Конспект урока</h3>
+                  <p style={{ fontSize: 13, color: dark ? '#a1a1aa' : '#475569', lineHeight: 1.6, marginBottom: 14 }}>
                     В Python конструкции <code>if</code>, <code>elif</code> и <code>else</code> позволяют ветвить логику программы в зависимости от условий.
                   </p>
                   <div className="code-block">
@@ -223,11 +230,11 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                 </div>
 
                 {/* Homework Upload */}
-                <div className="card" style={{ padding: 24 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 6 }}>Практическое задание</h3>
-                  <p style={{ fontSize: 13, color: dark ? '#a1a1aa' : '#475569', marginBottom: 16 }}>Напишите программу проверки пароля с выводом сообщения об ошибке.</p>
-                  <div className="upload-zone">
-                    <Upload size={24} color="#60a5fa" style={{ margin: '0 auto 8px' }} />
+                <div className="card" style={{ padding: 18 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 4 }}>Практическое задание</h3>
+                  <p style={{ fontSize: 12, color: dark ? '#a1a1aa' : '#475569', marginBottom: 14 }}>Напишите программу проверки пароля с выводом сообщения об ошибке.</p>
+                  <div className="upload-zone" style={{ padding: '24px 16px' }}>
+                    <Upload size={22} color="#60a5fa" style={{ margin: '0 auto 6px' }} />
                     <p style={{ fontSize: 13, fontWeight: 600, color: dark ? '#f4f4f5' : '#0f172a' }}>Загрузить файл .py</p>
                   </div>
                 </div>
@@ -237,20 +244,20 @@ export default function LessonPage({ theme, onNavigate }: Props) {
           </div>
         </div>
 
-        {/* AI Sidebar */}
+        {/* AI Sidebar Overlay */}
         {aiOpen && (
           <div className="lesson-ai">
-            <div style={{ padding: 14, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: 12, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bot size={16} color="#a78bfa" />
                 <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>AI Помощник</span>
               </div>
-              <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={14} /></button>
+              <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={16} /></button>
             </div>
 
-            <div style={{ flex: 1, padding: 14, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ flex: 1, padding: 12, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
               {aiMsgs.map((m, i) => (
-                <div key={i} className={m.role === 'ai' ? 'msg-ai' : 'msg-user'} style={{ padding: '10px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '88%', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end' }}>
+                <div key={i} className={m.role === 'ai' ? 'msg-ai' : 'msg-user'} style={{ padding: '10px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '90%', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end' }}>
                   {m.text}
                 </div>
               ))}
