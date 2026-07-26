@@ -1,5 +1,12 @@
 // AI Service Integration for SkillPlanet
-// Powered by Google Gemini AI API Key (VITE_GEMINI_API_KEY)
+// Powered by Groq Cloud (Llama-3 70B Ultra-Fast) & Google Gemini AI
+
+function getGroqApiKey(): string {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GROQ_API_KEY) {
+    return import.meta.env.VITE_GROQ_API_KEY;
+  }
+  return "";
+}
 
 function getGeminiApiKey(): string {
   if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_GEMINI_API_KEY) {
@@ -16,14 +23,69 @@ export interface AiMessage {
 export async function askAiAssistant(userQuery: string, courseTitle = 'Python & AI / General English'): Promise<string> {
   const query = userQuery.trim();
   const qLower = query.toLowerCase();
-  const geminiKey = getGeminiApiKey();
 
-  // 🤖 1. REAL-TIME GOOGLE GEMINI API INVOCATION
+  // ⚡ 1. REAL-TIME GROQ CLOUD API INVOCATION (Llama-3.3 70B Ultra-Fast AI)
+  const groqKey = getGroqApiKey();
+  if (groqKey) {
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqKey}`,
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `Ты — высокоинтеллектуальный ИИ-Тьютор образовательной платформы SkillPlanet по курсу "${courseTitle}". Отвечай вежливо, точно, доступно и интересно на русском языке с использованием форматирования Markdown, приведением примера кода или грамматики.`
+            },
+            {
+              role: 'user',
+              content: query
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 600,
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const text = data?.choices?.[0]?.message?.content;
+        if (text) return text;
+      } else {
+        // Fallback Llama 3 70B model
+        const resFb = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqKey}`,
+          },
+          body: JSON.stringify({
+            model: 'llama3-70b-8192',
+            messages: [{ role: 'user', content: query }],
+            max_tokens: 500,
+          })
+        });
+        if (resFb.ok) {
+          const dataFb = await resFb.json();
+          const textFb = dataFb?.choices?.[0]?.message?.content;
+          if (textFb) return textFb;
+        }
+      }
+    } catch (err) {
+      console.warn('Groq API error:', err);
+    }
+  }
+
+  // 🤖 2. REAL-TIME GOOGLE GEMINI API INVOCATION
+  const geminiKey = getGeminiApiKey();
   if (geminiKey) {
     try {
-      const promptText = `Ты — персональный ИИ-Тьютор образовательной платформы SkillPlanet по курсу "${courseTitle}". Ответь максимально точно, вежливо, доступно и интересно на русском языке с понятным форматированием кодом или примерами: ${query}`;
+      const promptText = `Ты — персональный ИИ-Тьютор образовательной платформы SkillPlanet по курсу "${courseTitle}". Ответь максимально точно, вежливо и понятно на русском языке: ${query}`;
 
-      // Try Gemini 2.0 Flash
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -36,32 +98,18 @@ export async function askAiAssistant(userQuery: string, courseTitle = 'Python & 
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text) return text;
-      } else {
-        // Fallback to Gemini 1.5 Flash
-        const res15 = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }]
-          })
-        });
-        if (res15.ok) {
-          const data15 = await res15.json();
-          const text15 = data15?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text15) return text15;
-        }
       }
     } catch (err) {
-      console.warn('Gemini API fetch error, using dynamic tutor engine:', err);
+      console.warn('Gemini API fetch error:', err);
     }
   }
 
-  // 🤖 2. DYNAMIC NATURAL LANGUAGE ENGINE (Fallback)
+  // 🤖 3. DYNAMIC NATURAL LANGUAGE ENGINE (Fallback)
 
   // Greetings
   if (/^(привет|здравствуй|хай|hello|hi|good morning|добрый день)/i.test(qLower)) {
     const greetings = [
-      `Привет! Я твой ИИ-Наставник Gemini по курсу "${courseTitle}". О чём именно хочешь спросить? Разберём грамматику, синтаксис кода или решение задачи!`,
+      `Привет! Я твой ИИ-Наставник по курсу "${courseTitle}". О чём именно хочешь спросить? Разберём грамматику, синтаксис кода или решение задачи!`,
       `Здравствуйте! Готов помочь разобраться с любой сложной темой. Напиши свой вопрос по уроку или коду!`,
       `Приветствую! Отличный день для обучения. Задавай вопрос — разберём его по шагам.`
     ];
