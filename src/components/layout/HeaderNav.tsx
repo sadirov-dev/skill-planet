@@ -94,8 +94,8 @@ export default function HeaderNav({
             </span>
           </div>
 
-          {/* Desktop Nav Links (Hidden on mobile <767px) */}
-          <nav className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          {/* Desktop Nav Links (Hidden on mobile <767px via CSS .nav-desktop) */}
+          <nav className="nav-desktop">
             {currentUser.role === 'student' && (
               <>
                 <button className={`navbar__link ${currentPage === 'landing' ? 'active' : ''}`} onClick={() => onNavigate('landing')}>
