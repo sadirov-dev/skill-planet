@@ -19,6 +19,27 @@ export type Page =
 
 export type UserRole = 'student' | 'teacher' | 'admin';
 
+export type CourseLevel =
+  | 'Beginner'
+  | 'Elementary'
+  | 'Pre-Intermediate'
+  | 'Intermediate'
+  | 'Upper-Intermediate'
+  | 'Advanced'
+  | 'Pro';
+
+export type SkillType =
+  | 'Grammar'
+  | 'Reading'
+  | 'Listening'
+  | 'Speaking'
+  | 'Writing'
+  | 'Vocabulary'
+  | 'Homework'
+  | 'Theory'
+  | 'Practice'
+  | 'Quiz';
+
 export interface User {
   id: string;
   name: string;
@@ -39,7 +60,7 @@ export interface Course {
   title: string;
   description: string;
   category: string;
-  level: 'Beginner' | 'Intermediate' | 'Pro';
+  level: CourseLevel;
   rating: number;
   reviewCount: number;
   teacherName: string;
@@ -50,6 +71,7 @@ export interface Course {
   duration: string;
   studentsCount: number;
   tags: string[];
+  levelsSupported?: CourseLevel[];
   curriculum: Module[];
   prerequisites: string[];
   approved: boolean;
@@ -58,6 +80,8 @@ export interface Course {
 export interface Module {
   id: string;
   title: string;
+  level?: CourseLevel;
+  skillType?: SkillType;
   lessons: Lesson[];
 }
 
@@ -66,7 +90,9 @@ export interface Lesson {
   title: string;
   duration: string;
   completed?: boolean;
-  type: 'video' | 'text' | 'quiz';
+  type: 'video' | 'text' | 'quiz' | 'audio' | 'speaking' | 'writing';
+  skillType?: SkillType;
+  level?: CourseLevel;
   videoUrl?: string;
   quiz?: QuizQuestion[];
 }
@@ -82,6 +108,7 @@ export interface Homework {
   id: string;
   title: string;
   courseName: string;
+  skillType?: SkillType;
   studentName?: string;
   studentAvatar?: string;
   dueDate: string;
@@ -110,6 +137,7 @@ export interface EnrolledCourse {
   nextLesson: string;
   totalLessons: number;
   completedLessons: number;
+  level?: CourseLevel;
 }
 
 export interface LeaderboardEntry {

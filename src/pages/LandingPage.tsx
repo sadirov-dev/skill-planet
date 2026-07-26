@@ -317,7 +317,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ theme, onNavigate }) => {
           </h2>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
-          {mockTestimonials.map((t, i) => (
+          {mockTestimonials.map((t: any) => (
             <div key={t.id} style={{
               padding: 24, borderRadius: 18,
               background: T.card,
