@@ -144,12 +144,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ theme, onNavigate }) => {
 
           {/* CTAs */}
           <div className="fade-up-5" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: 60 }}>
-            <button className="btn-primary" style={{ fontSize: 16 }} onClick={() => onNavigate('auth')}>
+            <button className="btn btn-lg btn-primary" onClick={() => onNavigate('auth')}>
               Начать бесплатно <ArrowRight size={18} />
             </button>
-            <button className="btn-secondary" onClick={() => onNavigate('catalog')} style={{ color: T.muted, borderColor: T.border }}>
-              <Play size={15} style={{ color: '#60a5fa' }} />
-              Смотреть курсы
+            <button className="btn btn-lg btn-ghost" onClick={() => onNavigate('catalog')}>
+              <Play size={15} style={{ color: '#60a5fa' }} /> Смотреть курсы
             </button>
           </div>
 
