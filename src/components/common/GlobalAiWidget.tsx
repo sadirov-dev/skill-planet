@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2, Sparkles, ChevronDown, Check, Plus, Key, Cpu, AlertCircle, Globe } from 'lucide-react';
+import { Bot, X, Send, Loader2, Sparkles, ChevronDown, Check, Plus, Key, Cpu, AlertCircle } from 'lucide-react';
 import { askAiAssistant, AI_MODELS, type AiModelId } from '../../services/aiService';
 
 interface Props {
@@ -12,18 +12,10 @@ interface CustomModel {
   badge: string;
   apiKey: string;
   modelId: string;
-  endpoint: string; // OpenAI-compatible API base URL
+  endpoint: string;
 }
 
-const CUSTOM_MODELS_KEY = 'skillplanet_custom_models_v2';
-
-const PROVIDER_PRESETS = [
-  { name: 'Groq',       endpoint: 'https://api.groq.com/openai/v1',      icon: '⚡', placeholder: 'gsk_...' },
-  { name: 'OpenAI',     endpoint: 'https://api.openai.com/v1',            icon: '🟢', placeholder: 'sk-...' },
-  { name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1',         icon: '🔀', placeholder: 'sk-or-...' },
-  { name: 'Together',   endpoint: 'https://api.together.xyz/v1',          icon: '🤝', placeholder: 'ваш ключ' },
-  { name: 'Свой',       endpoint: '',                                      icon: '⚙️', placeholder: 'ваш ключ' },
-];
+const CUSTOM_MODELS_KEY = 'skillplanet_custom_models_v3';
 
 function loadCustomModels(): CustomModel[] {
   try {
@@ -47,13 +39,10 @@ export default function GlobalAiWidget({ theme }: Props) {
     { role: 'ai', text: 'Привет! Я ИИ-Ассистент SkillPlanet. Выберите модель из списка и задайте любой вопрос!' }
   ]);
 
-  // Custom model modal state
+  // Modal state - ONLY 2 FIELDS: Name & API Key
   const [showAddModal, setShowAddModal] = useState(false);
   const [customName, setCustomName] = useState('');
-  const [customModelId, setCustomModelId] = useState('');
   const [customApiKey, setCustomApiKey] = useState('');
-  const [customEndpoint, setCustomEndpoint] = useState('https://api.groq.com/openai/v1');
-  const [selectedPreset, setSelectedPreset] = useState(0);
   const [customError, setCustomError] = useState('');
   const [customTesting, setCustomTesting] = useState(false);
   const [customModels, setCustomModels] = useState<CustomModel[]>(loadCustomModels);
@@ -66,7 +55,7 @@ export default function GlobalAiWidget({ theme }: Props) {
   const customModel = customModels.find(m => m.id === modelId);
   const activeLabel = builtInModel?.label ?? customModel?.label ?? modelId;
   const activeBadge = builtInModel?.badge ?? customModel?.badge ?? '🤖';
-  const activeDesc = builtInModel?.description ?? customModel?.modelId ?? '';
+  const activeDesc = builtInModel?.description ?? customModel?.modelId ?? 'Своя модель';
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,11 +71,6 @@ export default function GlobalAiWidget({ theme }: Props) {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handlePresetSelect = (idx: number) => {
-    setSelectedPreset(idx);
-    setCustomEndpoint(PROVIDER_PRESETS[idx].endpoint);
-  };
-
   const handleSend = async () => {
     if (!input.trim() || loading) return;
     const txt = input;
@@ -98,19 +82,17 @@ export default function GlobalAiWidget({ theme }: Props) {
       let reply: string;
 
       if (customModel) {
-        // Custom model — use its own endpoint + API key
         const endpoint = customModel.endpoint.replace(/\/$/, '');
         const res = await fetch(`${endpoint}/chat/completions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${customModel.apiKey}`,
-            'HTTP-Referer': 'https://skill-planet.vercel.app',
           },
           body: JSON.stringify({
             model: customModel.modelId,
             messages: [
-              { role: 'system', content: `Ты — ИИ-ассистент ${customModel.label}. Отвечай прямо и по существу на языке пользователя.` },
+              { role: 'system', content: `Ты — ИИ-ассистент ${customModel.label}. Отвечай прямо и по существу.` },
               ...messages.slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.text })),
               { role: 'user', content: txt }
             ],
@@ -124,14 +106,14 @@ export default function GlobalAiWidget({ theme }: Props) {
           reply = data?.choices?.[0]?.message?.content ?? 'Нет ответа.';
         } else {
           const err = await res.json().catch(() => ({}));
-          reply = `Ошибка API: ${err?.error?.message ?? res.status}. Проверьте ключ и модель.`;
+          reply = `Ошибка API: ${err?.error?.message ?? res.status}. Проверьте ключ.`;
         }
       } else {
         reply = await askAiAssistant(txt, 'SkillPlanet', modelId as AiModelId, messages);
       }
 
       setMessages(prev => [...prev, { role: 'ai', text: reply }]);
-    } catch (e) {
+    } catch {
       setMessages(prev => [...prev, { role: 'ai', text: 'Ошибка соединения. Попробуйте снова.' }]);
     } finally {
       setLoading(false);
@@ -139,26 +121,34 @@ export default function GlobalAiWidget({ theme }: Props) {
   };
 
   const handleAddCustomModel = async () => {
-    if (!customName.trim()) return setCustomError('Введите название модели');
-    if (!customModelId.trim()) return setCustomError('Введите ID модели');
+    if (!customName.trim()) return setCustomError('Введите имя модели');
     if (!customApiKey.trim()) return setCustomError('Введите API ключ');
-    if (!customEndpoint.trim()) return setCustomError('Введите адрес API');
 
     setCustomTesting(true);
     setCustomError('');
 
-    const endpoint = customEndpoint.replace(/\/$/, '');
+    const key = customApiKey.trim();
+    // Auto-detect endpoint & model ID based on key format
+    let endpoint = 'https://api.groq.com/openai/v1';
+    let targetModelId = 'llama-3.3-70b-versatile';
+
+    if (key.startsWith('sk-or-')) {
+      endpoint = 'https://openrouter.ai/api/v1';
+      targetModelId = 'meta-llama/llama-3.3-70b-instruct:free';
+    } else if (key.startsWith('sk-')) {
+      endpoint = 'https://api.openai.com/v1';
+      targetModelId = 'gpt-3.5-turbo';
+    }
 
     try {
       const res = await fetch(`${endpoint}/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${customApiKey}`,
-          'HTTP-Referer': 'https://skill-planet.vercel.app',
+          'Authorization': `Bearer ${key}`,
         },
         body: JSON.stringify({
-          model: customModelId,
+          model: targetModelId,
           messages: [{ role: 'user', content: 'test' }],
           max_tokens: 5,
         })
@@ -171,7 +161,7 @@ export default function GlobalAiWidget({ theme }: Props) {
         return;
       }
     } catch {
-      setCustomError('Не удалось подключиться. Проверьте endpoint и интернет.');
+      setCustomError('Не удалось проверить ключ. Проверьте подключение к интернету.');
       setCustomTesting(false);
       return;
     }
@@ -179,10 +169,10 @@ export default function GlobalAiWidget({ theme }: Props) {
     const newModel: CustomModel = {
       id: `custom_${Date.now()}`,
       label: customName.trim(),
-      badge: PROVIDER_PRESETS[selectedPreset]?.icon ?? '🤖',
-      apiKey: customApiKey.trim(),
-      modelId: customModelId.trim(),
-      endpoint: customEndpoint.trim(),
+      badge: '🤖',
+      apiKey: key,
+      modelId: targetModelId,
+      endpoint: endpoint,
     };
 
     const updated = [...customModels, newModel];
@@ -190,12 +180,8 @@ export default function GlobalAiWidget({ theme }: Props) {
     saveCustomModels(updated);
     setModelId(newModel.id);
 
-    // Reset
     setCustomName('');
-    setCustomModelId('');
     setCustomApiKey('');
-    setCustomEndpoint('https://api.groq.com/openai/v1');
-    setSelectedPreset(0);
     setCustomError('');
     setCustomTesting(false);
     setShowAddModal(false);
@@ -260,7 +246,7 @@ export default function GlobalAiWidget({ theme }: Props) {
               </button>
             </div>
 
-            {/* Dropdown */}
+            {/* Dropdown Selector */}
             <div ref={dropdownRef} style={s({ position: 'relative' })}>
               <button
                 onClick={() => setDropdownOpen(v => !v)}
@@ -344,7 +330,7 @@ export default function GlobalAiWidget({ theme }: Props) {
                         <span style={s({ fontSize: 18 })}>{m.badge}</span>
                         <div>
                           <div style={s({ fontWeight: 700 })}>{m.label}</div>
-                          <div style={s({ fontSize: 11, color: '#71717a' })}>{m.modelId}</div>
+                          <div style={s({ fontSize: 11, color: '#71717a' })}>Своя модель</div>
                         </div>
                         {m.id === modelId && <Check size={14} color="#8b5cf6" />}
                       </button>
@@ -409,85 +395,60 @@ export default function GlobalAiWidget({ theme }: Props) {
         </div>
       )}
 
-      {/* Add Custom Model Modal */}
+      {/* Add Custom Model Modal — ONLY 2 FIELDS (Name & API Key) */}
       {showAddModal && (
         <div
           style={s({ position: 'fixed', inset: 0, zIndex: 99999, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 })}
           onClick={e => { if (e.target === e.currentTarget) setShowAddModal(false); }}
         >
-          <div style={s({ width: '100%', maxWidth: 480, borderRadius: 20, background: dark ? '#0d0d12' : '#ffffff', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`, boxShadow: '0 30px 80px rgba(0,0,0,0.6)', animation: 'fadeIn 0.2s ease-out' })}>
-            {/* Modal Header */}
+          <div style={s({ width: '100%', maxWidth: 420, borderRadius: 20, background: dark ? '#0d0d12' : '#ffffff', border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`, boxShadow: '0 30px 80px rgba(0,0,0,0.6)', animation: 'fadeIn 0.2s ease-out' })}>
+            {/* Header */}
             <div style={s({ padding: '20px 24px 16px', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' })}>
               <div style={s({ display: 'flex', alignItems: 'center', gap: 12 })}>
                 <div style={s({ width: 38, height: 38, borderRadius: 11, background: 'linear-gradient(135deg,#8b5cf6,#ec4899)', display: 'flex', alignItems: 'center', justifyContent: 'center' })}>
                   <Plus size={19} color="#fff" />
                 </div>
                 <div>
-                  <div style={s({ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' })}>Добавить свою модель</div>
-                  <div style={s({ fontSize: 11, color: '#71717a' })}>Работает с любым OpenAI-совместимым API</div>
+                  <div style={s({ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' })}>Добавить модель</div>
+                  <div style={s({ fontSize: 11, color: '#71717a' })}>Введите название и ваш API ключ</div>
                 </div>
               </div>
               <button onClick={() => setShowAddModal(false)} style={s({ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' })}><X size={20} /></button>
             </div>
 
-            {/* Modal Body */}
-            <div style={s({ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16, maxHeight: '70vh', overflowY: 'auto' })}>
-
-              {/* Provider Presets */}
-              <div>
-                <label style={s({ fontSize: 12, fontWeight: 700, color: dark ? '#a1a1aa' : '#52525b', display: 'block', marginBottom: 8 })}>
-                  Провайдер
-                </label>
-                <div style={s({ display: 'flex', gap: 6, flexWrap: 'wrap' })}>
-                  {PROVIDER_PRESETS.map((p, i) => (
-                    <button
-                      key={p.name}
-                      onClick={() => handlePresetSelect(i)}
-                      style={s({
-                        padding: '6px 12px', borderRadius: 8, border: 'none',
-                        background: selectedPreset === i ? 'linear-gradient(135deg,#8b5cf6,#3b82f6)' : (dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)'),
-                        color: selectedPreset === i ? '#fff' : (dark ? '#a1a1aa' : '#52525b'),
-                        cursor: 'pointer', fontSize: 12, fontWeight: 700, fontFamily: 'inherit',
-                        transition: 'all 0.15s',
-                      })}
-                    >
-                      {p.icon} {p.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Model Name */}
-              <div>
-                <label style={s({ fontSize: 12, fontWeight: 700, color: dark ? '#a1a1aa' : '#52525b', display: 'block', marginBottom: 6 })}>Название модели</label>
-                <input className="input" placeholder="Например: Мой GPT-4, Claude, Llama..." value={customName} onChange={e => setCustomName(e.target.value)} style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }} />
-              </div>
-
-              {/* Model ID */}
-              <div>
-                <label style={s({ fontSize: 12, fontWeight: 700, color: dark ? '#a1a1aa' : '#52525b', display: 'block', marginBottom: 6 })}>ID модели</label>
-                <input className="input" placeholder={selectedPreset === 0 ? 'llama-3.3-70b-versatile' : selectedPreset === 1 ? 'gpt-4o' : 'meta-llama/llama-3.3-70b-instruct:free'} value={customModelId} onChange={e => setCustomModelId(e.target.value)} style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }} />
-              </div>
-
-              {/* API Endpoint */}
+            {/* Body — EXACTLY 2 INPUT FIELDS */}
+            <div style={s({ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 })}>
+              {/* Field 1: Name */}
               <div>
                 <label style={s({ fontSize: 12, fontWeight: 700, color: dark ? '#a1a1aa' : '#52525b', display: 'block', marginBottom: 6 })}>
-                  <Globe size={11} style={{ display: 'inline', marginRight: 4 }} />
-                  Адрес API (Endpoint)
+                  Напишите имя модели
                 </label>
-                <input className="input" placeholder="https://api.groq.com/openai/v1" value={customEndpoint} onChange={e => setCustomEndpoint(e.target.value)} style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }} />
+                <input
+                  className="input"
+                  placeholder="Например: Моя Модель, Llama 3, GPT-4..."
+                  value={customName}
+                  onChange={e => setCustomName(e.target.value)}
+                  style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }}
+                />
               </div>
 
-              {/* API Key */}
+              {/* Field 2: API Key */}
               <div>
                 <label style={s({ fontSize: 12, fontWeight: 700, color: dark ? '#a1a1aa' : '#52525b', display: 'block', marginBottom: 6 })}>
                   <Key size={11} style={{ display: 'inline', marginRight: 4 }} />
-                  API Ключ
+                  Дайте API ключ
                 </label>
-                <input className="input" type="password" placeholder={PROVIDER_PRESETS[selectedPreset]?.placeholder ?? 'ваш API ключ'} value={customApiKey} onChange={e => setCustomApiKey(e.target.value)} style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }} />
+                <input
+                  className="input"
+                  type="password"
+                  placeholder="Вставьте ваш API ключ (gsk_..., sk-...)"
+                  value={customApiKey}
+                  onChange={e => setCustomApiKey(e.target.value)}
+                  style={{ fontSize: 13, padding: '10px 14px', width: '100%', boxSizing: 'border-box' as const }}
+                />
               </div>
 
-              {/* Error */}
+              {/* Error Alert */}
               {customError && (
                 <div style={s({ padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'flex-start', gap: 8 })}>
                   <AlertCircle size={14} color="#ef4444" style={{ flexShrink: 0, marginTop: 1 }} />
@@ -496,7 +457,7 @@ export default function GlobalAiWidget({ theme }: Props) {
               )}
 
               {/* Buttons */}
-              <div style={s({ display: 'flex', gap: 10 })}>
+              <div style={s({ display: 'flex', gap: 10, marginTop: 4 })}>
                 <button onClick={() => setShowAddModal(false)} className="btn btn-ghost" style={{ flex: 1, padding: '10px', fontSize: 13 }}>Отмена</button>
                 <button
                   onClick={handleAddCustomModel}
@@ -509,7 +470,7 @@ export default function GlobalAiWidget({ theme }: Props) {
                     fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                   })}
                 >
-                  {customTesting ? <><Loader2 size={14} className="spin" /> Проверяем...</> : <><Cpu size={14} /> Добавить модель</>}
+                  {customTesting ? <><Loader2 size={14} className="spin" /> Проверяем...</> : <><Cpu size={14} /> Сохранить модель</>}
                 </button>
               </div>
             </div>
