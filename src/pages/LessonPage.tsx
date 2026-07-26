@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles, Loader2 } from 'lucide-react';
+import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles, Loader2, Cpu, Zap } from 'lucide-react';
 import { mockCourses } from '../data/mock';
-import { askAiAssistant } from '../services/aiService';
+import { askAiAssistant, type AiModelProvider } from '../services/aiService';
 import type { QuizQuestion } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
@@ -14,8 +14,9 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   const [aiOpen, setAiOpen] = useState(false);
   const [aiInput, setAiInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<AiModelProvider>('groq');
   const [aiMsgs, setAiMsgs] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: 'Привет! Я твой ИИ-Тьютор на базе Bedrock AI. Задай мне любой вопрос по коду, грамматике или тестам!' }
+    { role: 'ai', text: 'Привет! Я твой реальный ИИ-Тьютор на базе Llama 3.3 и Gemini 2.0. Выберите модель и задайте любой вопрос по уроку!' }
   ]);
 
   // Quiz state
@@ -34,10 +35,10 @@ export default function LessonPage({ theme, onNavigate }: Props) {
     setAiLoading(true);
 
     try {
-      const reply = await askAiAssistant(txt, course.title);
+      const reply = await askAiAssistant(txt, course.title, selectedModel);
       setAiMsgs(p => [...p, { role: 'ai', text: reply }]);
     } catch {
-      setAiMsgs(p => [...p, { role: 'ai', text: 'ИИ обрабатывает запрос...' }]);
+      setAiMsgs(p => [...p, { role: 'ai', text: 'Ошибка сети при вызове ИИ.' }]);
     } finally {
       setAiLoading(false);
     }
@@ -71,7 +72,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
             <BookOpen size={14} /> <span className="hidden sm:inline">Уроки</span>
           </button>
           <button className={`btn btn-sm ${aiOpen ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setAiOpen(!aiOpen); if (sidebarOpen) setSidebarOpen(false); }} style={{ padding: '6px 10px', fontSize: 12 }}>
-            <Bot size={14} /> <span className="hidden sm:inline">Bedrock AI</span>
+            <Bot size={14} /> <span>ИИ ({selectedModel === 'groq' ? 'Llama 3.3' : 'Gemini 2.0'})</span>
           </button>
         </div>
       </div>
@@ -253,34 +254,66 @@ export default function LessonPage({ theme, onNavigate }: Props) {
           </div>
         </div>
 
-        {/* AI Sidebar Overlay */}
+        {/* AI Sidebar Overlay with Model Switcher Dropdown */}
         {aiOpen && (
           <div className="lesson-ai">
-            <div style={{ padding: 12, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Bot size={16} color="#a78bfa" />
-                <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Bedrock ИИ-Тьютор</span>
-                <span className="badge badge-green" style={{ fontSize: 9 }}>Active Key</span>
+            {/* AI Top Bar & Model Switcher */}
+            <div style={{ padding: 12, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Bot size={16} color="#a78bfa" />
+                  <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>ИИ-Тьютор</span>
+                </div>
+                <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={16} /></button>
               </div>
-              <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={16} /></button>
+
+              {/* Model Switcher Buttons */}
+              <div style={{ display: 'flex', gap: 4, background: dark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.04)', padding: 3, borderRadius: 10, border: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
+                <button
+                  onClick={() => setSelectedModel('groq')}
+                  style={{
+                    flex: 1, padding: '5px 8px', borderRadius: 8, border: 'none',
+                    background: selectedModel === 'groq' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'transparent',
+                    color: selectedModel === 'groq' ? '#fff' : '#71717a',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, transition: 'all 0.15s'
+                  }}
+                >
+                  <Zap size={11} /> Groq Llama 3.3
+                </button>
+                <button
+                  onClick={() => setSelectedModel('gemini')}
+                  style={{
+                    flex: 1, padding: '5px 8px', borderRadius: 8, border: 'none',
+                    background: selectedModel === 'gemini' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'transparent',
+                    color: selectedModel === 'gemini' ? '#fff' : '#71717a',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, transition: 'all 0.15s'
+                  }}
+                >
+                  <Cpu size={11} /> Gemini 2.0
+                </button>
+              </div>
             </div>
 
+            {/* Chat Messages */}
             <div style={{ flex: 1, padding: 12, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
               {aiMsgs.map((m, i) => (
-                <div key={i} className={m.role === 'ai' ? 'msg-ai' : 'msg-user'} style={{ padding: '10px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '90%', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end' }}>
+                <div key={i} className={m.role === 'ai' ? 'msg-ai' : 'msg-user'} style={{ padding: '10px 14px', fontSize: 12, lineHeight: 1.5, maxWidth: '90%', alignSelf: m.role === 'ai' ? 'flex-start' : 'flex-end', whiteSpace: 'pre-line' }}>
                   {m.text}
                 </div>
               ))}
               {aiLoading && (
                 <div className="msg-ai" style={{ padding: '10px 14px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Loader2 size={13} className="spin" color="#a78bfa" />
-                  <span>ИИ формирует ответ...</span>
+                  <span>{selectedModel === 'groq' ? 'Groq Llama 3.3 генерирует ответ...' : 'Gemini 2.0 генерирует ответ...'}</span>
                 </div>
               )}
             </div>
 
+            {/* Input Box */}
             <div style={{ padding: 12, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', gap: 6 }}>
-              <input className="input" placeholder="Задать вопрос ИИ..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
+              <input className="input" placeholder={`Спросить ${selectedModel === 'groq' ? 'Llama 3.3' : 'Gemini 2.0'}...`} value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
               <button className="btn btn-sm btn-primary" onClick={sendAi} disabled={aiLoading} style={{ padding: '8px 12px' }}>
                 <Send size={13} />
               </button>
