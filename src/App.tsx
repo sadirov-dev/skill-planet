@@ -8,6 +8,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import TeacherDashboard from './pages/TeacherDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import LessonPage from './pages/LessonPage';
+import GlobalAiWidget from './components/common/GlobalAiWidget';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('student-dashboard');
@@ -78,6 +79,9 @@ function App() {
       )}
 
       {renderPage()}
+
+      {/* Global AI Assistant Widget across all pages */}
+      <GlobalAiWidget theme={theme} />
     </>
   );
 }
