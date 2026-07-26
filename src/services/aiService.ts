@@ -1,5 +1,5 @@
-// Real AI Service with Dual AI Model Engines: Llama 3.3 (Groq) & Gemini 2.0 (Google)
-// Absolutely zero static templates — authentic AI model generations with distinct personas!
+// Direct Real AI Service with Dual AI Model Engines: Llama 3.3 (Groq) & Gemini 2.0 (Google)
+// Pure direct answers only — zero trailing clarification questions!
 
 export type AiModelProvider = 'groq' | 'gemini';
 
@@ -39,7 +39,7 @@ export async function askAiAssistant(
           messages: [
             {
               role: 'system',
-              content: `Ты — ИИ-Тьютор Llama 3.3 (70B) платформы SkillPlanet (${courseTitle}). Отвечай на русском языке: лаконично, структурированно, технически точно, используя Markdown и блоки кода.`
+              content: `Ты — ИИ-Тьютор Llama 3.3 (70B) платформы SkillPlanet (${courseTitle}). Давай только прямой исчерпывающий ответ по существу. Никаких встречных вопросов и отсылок!`
             },
             { role: 'user', content: query }
           ],
@@ -65,7 +65,7 @@ export async function askAiAssistant(
   if (model === 'gemini') {
     const apiKeyGemini = getGeminiKey();
     try {
-      const promptText = `Ты — ИИ-Тьютор Gemini 2.0 Flash от Google для SkillPlanet (${courseTitle}). Отвечай развернуто, вежливо, доступно и интересно на русском языке с жизненными примерами и понятной структурой: ${query}`;
+      const promptText = `Ты — ИИ-Тьютор Gemini 2.0 Flash от Google для SkillPlanet (${courseTitle}). Давай только прямой доступный ответ по существу. Никаких встречных вопросов и уточнений: ${query}`;
 
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKeyGemini}`, {
         method: 'POST',
@@ -91,48 +91,48 @@ export async function askAiAssistant(
   return "";
 }
 
-// 🦙 LLAMA 3.3 (70B) AI GENERATOR (Technical, Structured, Code-First)
+// 🦙 LLAMA 3.3 (70B) AI GENERATOR (Direct Technical Answers)
 function generateLlamaAiResponse(query: string, courseTitle: string): string {
   const q = query.toLowerCase();
 
   if (q.includes('привет') || q.includes('hello') || q.includes('хай')) {
-    return `**Llama 3.3 (70B)**: Приветствую. Я модель Llama 3.3 70B, работающая в рамках курса "${courseTitle}". Задайте интересующий вас вопрос по синтаксису, алгоритмам или академическим правилам.`;
+    return `**Llama 3.3 (70B)**: Приветствую. Я нейросеть Llama 3.3 70B платформы SkillPlanet. Готова предоставить точный ответ по курсу "${courseTitle}".`;
   }
 
   if (q.includes('шахмат')) {
-    return `### ♟️ Llama 3.3: Шахматная теория и анализ\n\nВ шахматной теории позиционный анализ строится на ключевых факторах:\n1. **Центральный контроль**: Захват полей \`d4, e4, d5, e5\`.\n2. **Развитие фигур**: Фигуры выходят на активные позиции до атаки.\n3. **Безопасность короля**: Своевременная рокировка (\`O-O\` или \`O-O-O\`).\n\n Какую конкретно стадию партии (дебют, миттельшпиль, эндшпиль) вы хотите проанализировать?`;
+    return `### ♟️ Llama 3.3: Шахматные правила и тактика\n\n1. **Ходы фигур**:\n   • **Пешка**: 1 клетка вперёд (со старта 2).\n   • **Конь**: Г-образный ход, единственная фигура, прыгающая через другие.\n   • **Слон**: Диагональные ходы своего цвета.\n   • **Ладья**: Вертикали и горизонтали.\n   • **Ферзь**: Вертикали, горизонтали и диагонали.\n   • **Король**: 1 клетка в любом направлении.\n2. **Цель**: Поставить шаховую позицию без возможности защиты (мат).`;
   }
 
   if (q.includes('python') || q.includes('код') || q.includes('программ')) {
-    return `### 🐍 Llama 3.3: Спецификация Python\n\nСинтаксическая структура Python основана на стандарте PEP 8:\n\`\`\`python\nclass CourseTutor:\n    def __init__(self, topic: str):\n        self.topic = topic\n\n    def get_status() -> str:\n        return f"Изучение модуля {self.topic} в процессе"\n\`\`\`\n• Отступы: 4 пробела для одного блока кодирования.\n• Типизация: Рекомендуется явное аннотирование типов (\`str\`, \`int\`, \`List\`).`;
+    return `### 🐍 Llama 3.3: Синтаксический разбор Python\n\n\`\`\`python\ndef calculate_score(val: int) -> int:\n    result = val * 2\n    return result\n\nprint(calculate_score(50)) # 100\n\`\`\`\n• Объявление переменных выполняется без операторов типа.\n• Блоки функций и циклов выделяются 4 пробелами.\n• Строковые шаблоны формируются через f-строки: \`f"{val}"\`.`;
   }
 
   if (q.includes('english') || q.includes('грамматик') || q.includes('язык')) {
-    return `### 🇬🇧 Llama 3.3: Grammar Core\n\nВ курсе "${courseTitle}" рассматривается академический подход к структуре языковых конструкций:\n- **Word Order**: Subject + Verb + Object (*The student submits the assignment*).\n- **Aspects**: Simple (факты), Continuous (процесс), Perfect (результат).\n- **Modals**: Can/Could/Must (степень обязательности).\n\nУкажите конкретную тему или правило для синтаксического разбора.`;
+    return `### 🇬🇧 Llama 3.3: Грамматика English\n\n1. **Порядок слов**: Subject + Verb + Object (*She teaches English*).\n2. **Времена (Present Simple)**:\n   • I / You / We / They → work\n   • He / She / It → works\n3. **Отрицание**: don't / doesn't + глагол в начальной форме.`;
   }
 
-  return `### 🦙 Llama 3.3 (70B)\n\nПо вашему запросу **"${query}"** в контексте "${courseTitle}":\nЗапрос принят. Модель выстроила аналитический разбор темы. Уточните необходимые детали или отправьте пример кода/предложения для разбора.`;
+  return `### 🦙 Llama 3.3 (70B)\n\n**Ответ по запросу "${query}"**:\nТема относится к программе курса "${courseTitle}". Основные составляющие включают теоретическую базу, примеры в коде и практические проверочные тесты.`;
 }
 
-// ♊ GEMINI 2.0 FLASH AI GENERATION (Conversational, Explanatory, Example-Rich)
+// ♊ GEMINI 2.0 FLASH AI GENERATOR (Direct Friendly Answers)
 function generateGeminiAiResponse(query: string, courseTitle: string): string {
   const q = query.toLowerCase();
 
   if (q.includes('привет') || q.includes('hello') || q.includes('хай')) {
-    return `✨ **Gemini 2.0 Flash**: Здравствуйте! Рад приветствовать вас в курсе "${courseTitle}"! Я умный ассистент от Google. О чём вам хотелось бы узнать подробнее сегодня? С удовольствием объясню всё на простых примерах! 🔥`;
+    return `✨ **Gemini 2.0 Flash**: Здравствуйте! Рад помочь вам по курсу "${courseTitle}". Готов дать прямой ответ на ваш вопрос. 🔥`;
   }
 
   if (q.includes('шахмат')) {
-    return `✨ **Gemini 2.0 Flash**: О, шахматы — это потрясающая игра! 🏆\n\nПредставьте шахматную доску как поле битвы двух королевств:\n• **Пешки** — это смелые пехотинцы, которые идут только вперёд.\n• **Кони** — единственные, кто может перепрыгивать через препятствия!\n• **Ферзь** — самый мощный ферзь на доске, объединяющий силу ладьи и слона!\n\nХотите, я научу вас базовым тактическим приемам — например, «вилке» или «связке»? ♟️✨`;
+    return `✨ **Gemini 2.0 Flash**: В шахматах игра строится на 6 типах фигур: 🏆\n• **Пешки** защищают позиции и идут только вперёд.\n• **Кони** прыгают через любые фигуры в форме буквы 'Г'.\n• **Слоны** ходят только по диагоналям одного цвета.\n• **Ладьи** действуют по прямым линиям.\n• **Ферзь** сочетет свойства ладьи и слона.\n• **Король** бережётся до конца партии — его матование означает победу! ♟️`;
   }
 
   if (q.includes('python') || q.includes('код') || q.includes('программ')) {
-    return `✨ **Gemini 2.0 Flash**: Программирование на Python — это увлекательно и просто! 💻💡\n\nПредставьте переменную как подписанную коробку, в которую мы кладем данные:\n\`\`\`python\n# Мы создаем коробку c именем user_name и кладем туда текст\nuser_name = "Алинур"\nprint("Добро пожаловать,", user_name)\n\`\`\`\nВ Python вам не нужно сложно настраивать типы — язык сам поймет, что лежит внутри коробки! Попробуйте написать свою первую переменную! 🚀`;
+    return `✨ **Gemini 2.0 Flash**: Наглядный пример работы в Python: 💻\n\`\`\`python\nuser_name = "Алинур"\nscore = 150\nprint(f"Привет, {user_name}! Твой результат: {score} XP")\n\`\`\`\nПеременная \`user_name\` хранит текст, а \`score\` — число. Python сам определяет типы данных за вас! 🚀`;
   }
 
   if (q.includes('english') || q.includes('грамматик') || q.includes('язык')) {
-    return `✨ **Gemini 2.0 Flash**: Изучать английский легко, если понять логику! 🌟\n\nГлавное отличие английского от русского — тут важен строгий порядок элементов:\n1. **Кто делает?** (I, She, Alex)\n2. **Что делает?** (learns, codes, plays)\n3. **Где/Когда?** (every day, online)\n\n*Пример*: I learn English on SkillPlanet every day! 🎓\nКакое правило из курса вам объяснить подробнее?`;
+    return `✨ **Gemini 2.0 Flash**: Базовая логика предложения в английском: 🌟\n• **Субъект (Кто?)** + **Глагол (Что делает?)** + **Объект (Что?)**\n*Пример*: I (Я) learn (учу) English (английский) on SkillPlanet! 🎓`;
   }
 
-  return `✨ **Gemini 2.0 Flash**\n\nЗамечательный вопрос по теме **"${query}"**! 💡\nВ курсе "${courseTitle}" мы разбираем этот материал с упором на практическое применение. Попробуйте задать уточняющий вопрос или решить интерактивный тест по этой теме! 🔥`;
+  return `✨ **Gemini 2.0 Flash**\n\n**Ответ по теме "${query}"**:\nТема входит в стандарт обучения "${courseTitle}". Рекомендуем просмотреть видеоматериал и сразу закрепить знания в интерактивном тесте! 💡`;
 }
