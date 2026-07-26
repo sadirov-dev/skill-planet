@@ -63,7 +63,7 @@ function CourseModal({ course, theme, rate, onClose, onEnroll }: { course: Cours
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {course.curriculum.map(mod => (
                 <div key={mod.id} style={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden' }}>
-                  <button onClick={() => setExpandedMod(expandedMod === mod.id ? null : mod.id)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyBetween: 'space-between', padding: '12px 16px', background: 'rgba(255,255,255,0.03)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', color: '#f4f4f5', textAlign: 'left' }}>
+                  <button onClick={() => setExpandedMod(expandedMod === mod.id ? null : mod.id)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'rgba(255,255,255,0.03)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', color: '#f4f4f5', textAlign: 'left' }}>
                     <span style={{ fontSize: 13, fontWeight: 600, flex: 1 }}>{mod.title}</span>
                     <span style={{ fontSize: 12, color: '#71717a', marginRight: 8 }}>{mod.lessons.length} уроков</span>
                     <ChevronRight size={14} style={{ color: '#71717a', transform: expandedMod === mod.id ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />

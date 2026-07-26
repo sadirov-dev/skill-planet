@@ -86,7 +86,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
                   <div key={i} className="chart-bar" style={{ height: `${h}%` }} title={`День ${i+1}: ${h * 3} активных`} />
                 ))}
               </div>
-              <div style={{ display: 'flex', justifyBetween: 'space-between', fontSize: 11, color: '#71717a', paddingTop: 10, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#71717a', paddingTop: 10, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}` }}>
                 <span>1 июля</span>
                 <span>Июль 2026</span>
                 <span>30 июля</span>

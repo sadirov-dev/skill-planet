@@ -183,7 +183,7 @@ export default function HeaderNav({
                 </div>
 
                 {/* Theme Switcher in Settings */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', padding: '8px 10px', borderRadius: 10, background: dark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: 10, background: dark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.02)', marginBottom: 12 }}>
                   <span style={{ fontSize: 12, fontWeight: 600, color: dark ? '#a1a1aa' : '#475569', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <Settings size={14} /> Тема оформления:
                   </span>

@@ -47,7 +47,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: dark ? '#09090b' : '#f8fafc' }}>
       {/* Top Bar */}
-      <div style={{ height: 48, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyBetween: 'space-between', padding: '0 16px', background: dark ? '#0d0d12' : '#fff' }}>
+      <div style={{ height: 48, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', background: dark ? '#0d0d12' : '#fff' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button className="btn btn-sm btn-ghost" onClick={() => onNavigate('student-dashboard')} style={{ padding: '4px 10px', fontSize: 12 }}>
             <ChevronLeft size={14} /> Кабинет
@@ -182,7 +182,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
               /* Standard Video / Text Lesson */
               <>
                 {/* Video Player */}
-                <div className="video-bg" style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyCenter: 'center', position: 'relative', overflow: 'hidden' }}>
+                <div className="video-bg" style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                   <img src="/images/course_python.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
                   <div style={{ position: 'absolute', textAlign: 'center' }}>
                     <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 0 40px rgba(59,130,246,0.5)', cursor: 'pointer' }}>
@@ -240,7 +240,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
         {/* AI Sidebar */}
         {aiOpen && (
           <div className="lesson-ai">
-            <div style={{ padding: 14, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+            <div style={{ padding: 14, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bot size={16} color="#a78bfa" />
                 <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>AI Помощник</span>
