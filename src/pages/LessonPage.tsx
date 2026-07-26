@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles } from 'lucide-react';
+import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles, Loader2 } from 'lucide-react';
 import { mockCourses } from '../data/mock';
+import { askAiAssistant } from '../services/aiService';
 import type { QuizQuestion } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
@@ -12,8 +13,9 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [aiOpen, setAiOpen] = useState(false);
   const [aiInput, setAiInput] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
   const [aiMsgs, setAiMsgs] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: 'Привет! Я AI-ассистент урока Python. Задай мне любой вопрос по коду или прохождению тестов!' }
+    { role: 'ai', text: 'Привет! Я твой ИИ-Тьютор на базе Bedrock AI. Задай мне любой вопрос по коду, грамматике или тестам!' }
   ]);
 
   // Quiz state
@@ -24,14 +26,21 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   const allLessons = course.curriculum.flatMap(m => m.lessons);
   const curLesson = allLessons.find(l => l.id === activeLesson) || allLessons[0];
 
-  const sendAi = () => {
-    if (!aiInput.trim()) return;
+  const sendAi = async () => {
+    if (!aiInput.trim() || aiLoading) return;
     const txt = aiInput;
     setAiInput('');
     setAiMsgs(p => [...p, { role: 'user', text: txt }]);
-    setTimeout(() => {
-      setAiMsgs(p => [...p, { role: 'ai', text: `В Python отступы (4 пробела) определяют блок кода. Для объявления функций используем def, а len() возвращает целое число (int).` }]);
-    }, 600);
+    setAiLoading(true);
+
+    try {
+      const reply = await askAiAssistant(txt, course.title);
+      setAiMsgs(p => [...p, { role: 'ai', text: reply }]);
+    } catch {
+      setAiMsgs(p => [...p, { role: 'ai', text: 'ИИ обрабатывает запрос...' }]);
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const handleSelectQuizOption = (qId: string, optIdx: number) => {
@@ -62,7 +71,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
             <BookOpen size={14} /> <span className="hidden sm:inline">Уроки</span>
           </button>
           <button className={`btn btn-sm ${aiOpen ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setAiOpen(!aiOpen); if (sidebarOpen) setSidebarOpen(false); }} style={{ padding: '6px 10px', fontSize: 12 }}>
-            <Bot size={14} /> <span className="hidden sm:inline">AI Помощник</span>
+            <Bot size={14} /> <span className="hidden sm:inline">Bedrock AI</span>
           </button>
         </div>
       </div>
@@ -250,7 +259,8 @@ export default function LessonPage({ theme, onNavigate }: Props) {
             <div style={{ padding: 12, borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Bot size={16} color="#a78bfa" />
-                <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>AI Помощник</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Bedrock ИИ-Тьютор</span>
+                <span className="badge badge-green" style={{ fontSize: 9 }}>Active Key</span>
               </div>
               <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={16} /></button>
             </div>
@@ -261,11 +271,19 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                   {m.text}
                 </div>
               ))}
+              {aiLoading && (
+                <div className="msg-ai" style={{ padding: '10px 14px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Loader2 size={13} className="spin" color="#a78bfa" />
+                  <span>ИИ формирует ответ...</span>
+                </div>
+              )}
             </div>
 
             <div style={{ padding: 12, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', gap: 6 }}>
-              <input className="input" placeholder="Задать вопрос..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
-              <button className="btn btn-sm btn-primary" onClick={sendAi} style={{ padding: '8px 12px' }}><Send size={13} /></button>
+              <input className="input" placeholder="Задать вопрос ИИ..." value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
+              <button className="btn btn-sm btn-primary" onClick={sendAi} disabled={aiLoading} style={{ padding: '8px 12px' }}>
+                <Send size={13} />
+              </button>
             </div>
           </div>
         )}
