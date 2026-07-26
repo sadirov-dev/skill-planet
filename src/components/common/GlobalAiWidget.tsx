@@ -274,7 +274,16 @@ export default function GlobalAiWidget({ theme }: Props) {
                 })}
               >
                 <div style={s({ display: 'flex', alignItems: 'center', gap: 8 })}>
-                  <span style={s({ fontSize: 16 })}>{activeBadge}</span>
+                  {builtInModel ? (
+                    <img
+                      src={builtInModel.logo}
+                      alt={builtInModel.label}
+                      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      style={s({ width: 28, height: 28, borderRadius: 8, objectFit: 'cover', flexShrink: 0 })}
+                    />
+                  ) : (
+                    <span style={s({ fontSize: 18, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, background: 'rgba(139,92,246,0.15)', flexShrink: 0 })}>{activeBadge}</span>
+                  )}
                   <div style={s({ textAlign: 'left' })}>
                     <div style={s({ fontWeight: 700 })}>{activeLabel}</div>
                     <div style={s({ fontSize: 10, color: '#71717a' })}>{activeDesc}</div>
@@ -289,7 +298,7 @@ export default function GlobalAiWidget({ theme }: Props) {
                   zIndex: 10000, background: dark ? '#1a1a2e' : '#ffffff',
                   border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`,
                   borderRadius: 12, boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
-                  maxHeight: 340, overflowY: 'auto', overflow: 'hidden',
+                  maxHeight: 340, overflowY: 'auto',
                 })}>
                   {AI_MODELS.map(m => (
                     <button
@@ -304,7 +313,13 @@ export default function GlobalAiWidget({ theme }: Props) {
                       })}
                     >
                       <div style={s({ display: 'flex', alignItems: 'center', gap: 10 })}>
-                        <span style={s({ fontSize: 18, width: 24, textAlign: 'center' })}>{m.badge}</span>
+                        <img
+                          src={m.logo}
+                          alt={m.label}
+                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; (e.currentTarget.nextSibling as HTMLElement).style.display = 'flex'; }}
+                          style={s({ width: 28, height: 28, borderRadius: 8, objectFit: 'cover', flexShrink: 0 })}
+                        />
+                        <span style={s({ fontSize: 18, width: 28, height: 28, display: 'none', alignItems: 'center', justifyContent: 'center', borderRadius: 8, background: 'rgba(139,92,246,0.15)' })}>{m.badge}</span>
                         <div>
                           <div style={s({ fontWeight: 700 })}>{m.label}</div>
                           <div style={s({ fontSize: 11, color: '#71717a' })}>{m.description}</div>

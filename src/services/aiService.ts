@@ -17,22 +17,24 @@ export interface AiModel {
   id: AiModelId;
   label: string;
   badge: string;
+  logo: string; // path in /public/models/
   groqModel: string;
   description: string;
 }
 
 export const AI_MODELS: AiModel[] = [
-  { id: 'llama3.3',    label: 'Llama 3.3',    badge: '⚡',  groqModel: 'llama-3.3-70b-versatile',    description: '70B — самая мощная' },
-  { id: 'gemini2',     label: 'Gemini 2.0',   badge: '♊',  groqModel: 'llama-3.3-70b-versatile',    description: 'Google Gemini' },
-  { id: 'bert',        label: 'BERT',         badge: '🧠',  groqModel: 'gemma2-9b-it',               description: 'Google BERT / Gemma 9B' },
-  { id: 'roberta',     label: 'RoBERTa',      badge: '🔬',  groqModel: 'llama3-70b-8192',            description: 'Facebook RoBERTa / Llama 70B' },
-  { id: 't5',          label: 'T5',           badge: '🔄',  groqModel: 'mixtral-8x7b-32768',         description: 'Google T5 / Mixtral 8x7B' },
-  { id: 'albert',      label: 'ALBERT',       badge: '💡',  groqModel: 'llama-3.1-8b-instant',       description: 'Google ALBERT / Llama 3.1' },
-  { id: 'distilbert',  label: 'DistilBERT',   badge: '🔵',  groqModel: 'llama3-8b-8192',             description: 'Compact BERT / Llama 8B' },
-  { id: 'xlnet',       label: 'XLNet',        badge: '🌐',  groqModel: 'llama3-70b-8192',            description: 'CMU XLNet / Llama 70B' },
-  { id: 'longformer',  label: 'Longformer',   badge: '📄',  groqModel: 'mixtral-8x7b-32768',         description: 'Allen AI / Mixtral' },
-  { id: 'reformer',    label: 'Reformer',     badge: '♻️',  groqModel: 'gemma2-9b-it',               description: 'Google Reformer / Gemma' },
+  { id: 'llama3.3',    label: 'Llama 3.3',    badge: '⚡',  logo: '/models/llama.png',      groqModel: 'llama-3.3-70b-versatile',    description: '70B — самая мощная' },
+  { id: 'gemini2',     label: 'Gemini 2.0',   badge: '♊',  logo: '/models/gemini.png',     groqModel: 'llama-3.3-70b-versatile',    description: 'Google Gemini' },
+  { id: 'bert',        label: 'BERT',         badge: '🧠',  logo: '/models/bert.png',       groqModel: 'gemma2-9b-it',               description: 'Google BERT / Gemma 9B' },
+  { id: 'roberta',     label: 'RoBERTa',      badge: '🔬',  logo: '/models/roberta.png',    groqModel: 'llama3-70b-8192',            description: 'Facebook RoBERTa / Llama 70B' },
+  { id: 't5',          label: 'T5',           badge: '🔄',  logo: '/models/t5.png',         groqModel: 'mixtral-8x7b-32768',         description: 'Google T5 / Mixtral 8x7B' },
+  { id: 'albert',      label: 'ALBERT',       badge: '💡',  logo: '/models/albert.png',     groqModel: 'llama-3.1-8b-instant',       description: 'Google ALBERT / Llama 3.1' },
+  { id: 'distilbert',  label: 'DistilBERT',   badge: '🔵',  logo: '/models/distilbert.png', groqModel: 'llama3-8b-8192',             description: 'Compact BERT / Llama 8B' },
+  { id: 'xlnet',       label: 'XLNet',        badge: '🌐',  logo: '/models/xlnet.png',      groqModel: 'llama3-70b-8192',            description: 'CMU XLNet / Llama 70B' },
+  { id: 'longformer',  label: 'Longformer',   badge: '📄',  logo: '/models/longformer.png', groqModel: 'mixtral-8x7b-32768',         description: 'Allen AI / Mixtral' },
+  { id: 'reformer',    label: 'Reformer',     badge: '♻️',  logo: '/models/reformer.png',   groqModel: 'gemma2-9b-it',               description: 'Google Reformer / Gemma' },
 ];
+
 
 function getGroqKey(): string {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GROQ_API_KEY) {
