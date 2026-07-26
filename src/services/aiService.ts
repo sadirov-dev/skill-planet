@@ -1,5 +1,5 @@
-// Advanced Dynamic AI Service for SkillPlanet
-// Reads API Key dynamically from VITE_BEDROCK_API_KEY environment variable
+// AI Service Integration for SkillPlanet AI Assistant
+// Active key loaded dynamically from VITE_BEDROCK_API_KEY environment variable
 
 function getApiKey(): string {
   if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BEDROCK_API_KEY) {
@@ -11,9 +11,9 @@ function getApiKey(): string {
 export async function askAiAssistant(userQuery: string, courseTitle = 'Python & AI / General English'): Promise<string> {
   const query = userQuery.trim();
   const qLower = query.toLowerCase();
-
-  // 1. Attempt API invocation if VITE_BEDROCK_API_KEY is configured
   const apiKey = getApiKey();
+
+  // Attempt real-time API call if key is active and server/proxy permits
   if (apiKey) {
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -43,7 +43,7 @@ export async function askAiAssistant(userQuery: string, courseTitle = 'Python & 
 
   // 🤖 DYNAMIC NATURAL LANGUAGE AI ENGINE (Unique, non-repeating custom responses)
 
-  // Greetings & Introductions
+  // Greetings
   if (/^(привет|здравствуй|хай|hello|hi|good morning|добрый день)/i.test(qLower)) {
     const greetings = [
       `Привет! Я твой ИИ-Наставник по курсу "${courseTitle}". О чём именно хочешь спросить? Разберём грамматику, синтаксис кода или решение задачи!`,
