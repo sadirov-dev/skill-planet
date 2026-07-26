@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles, Loader2, Cpu, Zap } from 'lucide-react';
 import { mockCourses } from '../data/mock';
-import { askAiAssistant, type AiModelProvider } from '../services/aiService';
+import { askAiAssistant, AI_MODELS, type AiModelId } from '../services/aiService';
 import type { QuizQuestion } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
@@ -14,7 +14,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
   const [aiOpen, setAiOpen] = useState(false);
   const [aiInput, setAiInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<AiModelProvider>('groq');
+  const [selectedModel, setSelectedModel] = useState<AiModelId>('llama3.3');
   const [aiMsgs, setAiMsgs] = useState<{ role: 'user' | 'ai'; text: string }[]>([
     { role: 'ai', text: 'Привет! Я твой реальный ИИ-Тьютор на базе Llama 3.3 и Gemini 2.0. Выберите модель и задайте любой вопрос по уроку!' }
   ]);
@@ -72,7 +72,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
             <BookOpen size={14} /> <span className="hidden sm:inline">Уроки</span>
           </button>
           <button className={`btn btn-sm ${aiOpen ? 'btn-primary' : 'btn-ghost'}`} onClick={() => { setAiOpen(!aiOpen); if (sidebarOpen) setSidebarOpen(false); }} style={{ padding: '6px 10px', fontSize: 12 }}>
-            <Bot size={14} /> <span>ИИ ({selectedModel === 'groq' ? 'Llama 3.3' : 'Gemini 2.0'})</span>
+            <Bot size={14} /> <span>ИИ ({AI_MODELS.find(m => m.id === selectedModel)?.label ?? selectedModel})</span>
           </button>
         </div>
       </div>
@@ -267,33 +267,28 @@ export default function LessonPage({ theme, onNavigate }: Props) {
                 <button onClick={() => setAiOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={16} /></button>
               </div>
 
-              {/* Model Switcher Buttons */}
-              <div style={{ display: 'flex', gap: 4, background: dark ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.04)', padding: 3, borderRadius: 10, border: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)'}` }}>
-                <button
-                  onClick={() => setSelectedModel('groq')}
-                  style={{
-                    flex: 1, padding: '5px 8px', borderRadius: 8, border: 'none',
-                    background: selectedModel === 'groq' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'transparent',
-                    color: selectedModel === 'groq' ? '#fff' : '#71717a',
-                    fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, transition: 'all 0.15s'
-                  }}
-                >
-                  <Zap size={11} /> Groq Llama 3.3
-                </button>
-                <button
-                  onClick={() => setSelectedModel('gemini')}
-                  style={{
-                    flex: 1, padding: '5px 8px', borderRadius: 8, border: 'none',
-                    background: selectedModel === 'gemini' ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'transparent',
-                    color: selectedModel === 'gemini' ? '#fff' : '#71717a',
-                    fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, transition: 'all 0.15s'
-                  }}
-                >
-                  <Cpu size={11} /> Gemini 2.0
-                </button>
-              </div>
+              {/* Model Dropdown */}
+              <select
+                value={selectedModel}
+                onChange={e => setSelectedModel(e.target.value as AiModelId)}
+                style={{
+                  width: '100%',
+                  padding: '7px 10px',
+                  borderRadius: 10,
+                  border: `1px solid ${dark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)'}`,
+                  background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
+                  color: dark ? '#f4f4f5' : '#0f172a',
+                  fontSize: 13,
+                  fontFamily: 'inherit',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  outline: 'none',
+                }}
+              >
+                {AI_MODELS.map(m => (
+                  <option key={m.id} value={m.id}>{m.badge} {m.label} — {m.description}</option>
+                ))}
+              </select>
             </div>
 
             {/* Chat Messages */}
@@ -306,14 +301,14 @@ export default function LessonPage({ theme, onNavigate }: Props) {
               {aiLoading && (
                 <div className="msg-ai" style={{ padding: '10px 14px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Loader2 size={13} className="spin" color="#a78bfa" />
-                  <span>{selectedModel === 'groq' ? 'Groq Llama 3.3 генерирует ответ...' : 'Gemini 2.0 генерирует ответ...'}</span>
+                  <span>{AI_MODELS.find(m => m.id === selectedModel)?.label ?? selectedModel} генерирует ответ...</span>
                 </div>
               )}
             </div>
 
             {/* Input Box */}
             <div style={{ padding: 12, borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)'}`, display: 'flex', gap: 6 }}>
-              <input className="input" placeholder={`Спросить ${selectedModel === 'groq' ? 'Llama 3.3' : 'Gemini 2.0'}...`} value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
+              <input className="input" placeholder={`Спросить ${AI_MODELS.find(m => m.id === selectedModel)?.label ?? selectedModel}...`} value={aiInput} onChange={e => setAiInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendAi()} style={{ fontSize: 12, padding: '8px 12px' }} />
               <button className="btn btn-sm btn-primary" onClick={sendAi} disabled={aiLoading} style={{ padding: '8px 12px' }}>
                 <Send size={13} />
               </button>
