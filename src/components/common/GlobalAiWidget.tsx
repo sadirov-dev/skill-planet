@@ -200,15 +200,10 @@ export default function GlobalAiWidget({ theme }: Props) {
     <>
       {/* Floating Trigger Button */}
       <button
+        className="ai-widget-trigger"
         onClick={() => setIsOpen(!isOpen)}
         style={s({
-          position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-          width: 56, height: 56, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)',
-          border: 'none', boxShadow: '0 8px 32px rgba(139,92,246,0.5)',
-          color: '#fff', display: isOpen ? 'none' : 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', transition: 'transform 0.2s',
+          display: isOpen ? 'none' : 'flex',
         })}
         onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.1)')}
         onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
@@ -218,17 +213,20 @@ export default function GlobalAiWidget({ theme }: Props) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={s({
-          position: 'fixed', bottom: 20, right: 20, zIndex: 9999,
-          width: 'clamp(340px, 92vw, 540px)',
-          height: 'calc(100vh - 40px)', maxHeight: 700,
-          borderRadius: 20,
-          background: dark ? '#0d0d12' : '#ffffff',
-          border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
-          boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
-          display: 'flex', flexDirection: 'column', overflow: 'visible',
-          animation: 'fadeIn 0.2s ease-out',
-        })}>
+        <div
+          className="ai-widget-window"
+          style={s({
+            position: 'fixed', bottom: 24, right: 20, zIndex: 9999,
+            width: 'clamp(340px, 92vw, 540px)',
+            height: 'calc(100vh - 48px)', maxHeight: 700,
+            borderRadius: 20,
+            background: dark ? '#0d0d12' : '#ffffff',
+            border: `1px solid ${dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+            boxShadow: '0 24px 60px rgba(0,0,0,0.5)',
+            display: 'flex', flexDirection: 'column', overflow: 'visible',
+            animation: 'fadeIn 0.2s ease-out',
+          })}
+        >
           {/* Header */}
           <div style={s({ padding: '14px 16px 12px', borderBottom: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`, borderRadius: '20px 20px 0 0' })}>
             <div style={s({ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 })}>
