@@ -381,21 +381,22 @@ body.light .stripe { background:linear-gradient(90deg,transparent,rgba(0,0,0,.08
   transition: transform 0.2s, bottom 0.2s;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   .ai-widget-trigger {
-    bottom: 28px !important;
+    bottom: 84px !important;
     right: 16px !important;
     width: 52px !important;
     height: 52px !important;
   }
   .ai-widget-window {
     position: fixed !important;
-    bottom: 16px !important;
+    bottom: 74px !important;
     right: 12px !important;
     left: 12px !important;
     width: auto !important;
-    height: calc(100vh - 75px) !important;
-    max-height: 640px !important;
+    height: calc(100vh - 135px) !important;
+    max-height: 600px !important;
   }
 }
+
 
