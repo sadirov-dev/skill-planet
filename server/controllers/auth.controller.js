@@ -32,15 +32,20 @@ export const register = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Пользователь с таким email уже существует' });
     }
 
+    const isTeacherRequest = role === 'teacher';
+    const initialRole = isTeacherRequest ? 'student' : (['student', 'admin'].includes(role) ? role : 'student');
+
     const passwordHash = await bcrypt.hash(password, 8);
     const newUser = {
       id: `u_${Date.now()}`,
       name: name.trim(),
       email: email.trim().toLowerCase(),
       passwordHash,
-      role: ['student', 'teacher', 'admin'].includes(role) ? role : 'student',
+      role: initialRole,
+      requestedRole: isTeacherRequest ? 'teacher' : undefined,
+      teacherPending: isTeacherRequest,
       verified: false,
-      avatar: '/images/avatar_teacher2.jpg',
+      avatar: isTeacherRequest ? '/images/avatar_teacher1.jpg' : '/images/avatar_teacher2.jpg',
       xp: 100,
       streak: 1,
       joinedAt: new Date().toISOString().split('T')[0],
@@ -58,7 +63,9 @@ export const register = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Регистрация прошла успешно!',
+      message: isTeacherRequest
+        ? 'Регистрация прошла успешно! Ваша заявка на статус Учителя находится на проверке администратора.'
+        : 'Регистрация прошла успешно!',
       token,
       user: userWithoutPass,
     });
@@ -125,4 +132,23 @@ export const updateProfile = (req, res) => {
 
   const { passwordHash: _, ...userWithoutPass } = user;
   return res.json({ success: true, message: 'Профиль обновлен', user: userWithoutPass });
+};
+
+export const approveTeacher = (req, res) => {
+  const { userId } = req.body;
+  const user = usersDB.find(u => u.id === userId);
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+  }
+
+  user.role = 'teacher';
+  user.teacherPending = false;
+  user.verified = true;
+
+  const { passwordHash: _, ...userWithoutPass } = user;
+  return res.json({
+    success: true,
+    message: `Статус Преподавателя подтвержден для ${user.name}!`,
+    user: userWithoutPass,
+  });
 };

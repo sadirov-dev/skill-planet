@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { register, login, getMe, updateProfile } from '../controllers/auth.controller.js';
+import { register, login, getMe, updateProfile, approveTeacher } from '../controllers/auth.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
 
 const router = Router();
@@ -8,5 +8,6 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', authenticateToken, getMe);
 router.put('/profile', authenticateToken, updateProfile);
+router.post('/approve-teacher', approveTeacher);
 
 export default router;

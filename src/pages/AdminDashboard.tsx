@@ -280,6 +280,56 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
         {/* Tab 5: Approvals */}
         {tab === 'approvals' && (
           <div className="grid-1">
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', marginBottom: 14 }}>
+              👨‍🏫 Заявки на получение статуса Преподавателя
+            </h3>
+
+            {(() => {
+              const pending: any[] = JSON.parse(localStorage.getItem('skillplanet_pending_teachers') || '[]');
+              if (pending.length === 0) {
+                return (
+                  <div className="card" style={{ padding: 24, textAlign: 'center', color: '#71717a' }}>
+                    Новых заявок от учителей пока нет ☕
+                  </div>
+                );
+              }
+              return pending.map((reqItem: any) => (
+                <div key={reqItem.id} className="card" style={{ padding: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <img src="/images/avatar_teacher1.jpg" alt="" style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover' }} />
+                    <div>
+                      <h4 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>{reqItem.name}</h4>
+                      <div style={{ fontSize: 12, color: dark ? '#71717a' : '#64748b' }}>{reqItem.email} · Подано: {reqItem.requestedAt || 'Сегодня'}</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => {
+                        // Approve Teacher
+                        try {
+                          const savedAccs: any[] = JSON.parse(localStorage.getItem('skillplanet_saved_accounts_v1') || '[]');
+                          const updated = savedAccs.map(a => a.id === reqItem.id ? { ...a, role: 'teacher', roleTitle: 'Преподаватель', badgeColor: 'badge-violet', defaultPage: 'teacher-dashboard' } : a);
+                          localStorage.setItem('skillplanet_saved_accounts_v1', JSON.stringify(updated));
+
+                          const remaining = pending.filter(p => p.id !== reqItem.id);
+                          localStorage.setItem('skillplanet_pending_teachers', JSON.stringify(remaining));
+
+                          alert(`Статус Преподавателя официально подтвержден для ${reqItem.name}!`);
+                          window.location.reload();
+                        } catch {}
+                      }}
+                    >
+                      <CheckCircle size={13} /> ✓ Подтвердить статус Учителя
+                    </button>
+                  </div>
+                </div>
+              ));
+            })()}
+
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a', margin: '20px 0 14px' }}>
+              📚 Курсы на модерации
+            </h3>
             <div className="card" style={{ padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                 <img src="/images/course_go.jpg" alt="" style={{ width: 64, height: 48, borderRadius: 10, objectFit: 'cover' }} />

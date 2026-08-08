@@ -90,40 +90,54 @@ export default function AuthPage({ theme, onNavigate, onSwitchUser }: Props) {
       } else {
         const apiRes = await registerUser({ name: name.trim(), email: cleanEmail, password, role });
         if (apiRes.success) {
+          const isTeacherReq = role === 'teacher';
           const newUserAcc: UserAccount = {
             id: `u_${Date.now()}`,
             name: name.trim(),
             email: cleanEmail,
-            role,
-            roleTitle: role === 'teacher' ? 'Преподаватель' : 'Ученик',
-            avatar: role === 'teacher' ? '/images/avatar_teacher1.jpg' : '/images/avatar_teacher2.jpg',
-            badgeColor: role === 'teacher' ? 'badge-violet' : 'badge-blue',
-            defaultPage: role === 'teacher' ? 'teacher-dashboard' : 'student-dashboard',
+            role: 'student', // Starts as student until approved by admin
+            roleTitle: isTeacherReq ? 'Ученик (Заявка на учителя ⏳)' : 'Ученик',
+            avatar: isTeacherReq ? '/images/avatar_teacher1.jpg' : '/images/avatar_teacher2.jpg',
+            badgeColor: isTeacherReq ? 'badge-amber' : 'badge-blue',
+            defaultPage: 'student-dashboard',
           };
-          setSuccessMsg('Аккаунт успешно создан!');
+
+          if (isTeacherReq) {
+            try {
+              const pendingList = JSON.parse(localStorage.getItem('skillplanet_pending_teachers') || '[]');
+              pendingList.push({ id: newUserAcc.id, name: newUserAcc.name, email: newUserAcc.email, requestedAt: new Date().toLocaleDateString('ru-RU') });
+              localStorage.setItem('skillplanet_pending_teachers', JSON.stringify(pendingList));
+            } catch {}
+          }
+
+          setSuccessMsg(
+            isTeacherReq
+              ? 'Аккаунт создан! Заявка на статус Преподавателя отправлена на модерацию администратору.'
+              : 'Аккаунт успешно создан!'
+          );
           setTimeout(() => {
             if (onSwitchUser) onSwitchUser(newUserAcc);
-            onNavigate(newUserAcc.defaultPage);
-          }, 400);
+            onNavigate('student-dashboard');
+          }, 1200);
           return;
         }
       }
 
-      // Fallback: create dynamic user session
+      // Fallback
       const dynamicUser: UserAccount = {
         id: `u_${Date.now()}`,
         name: name.trim() || cleanEmail.split('@')[0],
         email: cleanEmail,
-        role: tab === 'register' ? role : 'student',
-        roleTitle: (tab === 'register' ? role : 'student') === 'teacher' ? 'Преподаватель' : 'Ученик',
+        role: 'student',
+        roleTitle: 'Ученик',
         avatar: '/images/avatar_teacher2.jpg',
         badgeColor: 'badge-blue',
-        defaultPage: (tab === 'register' ? role : 'student') === 'teacher' ? 'teacher-dashboard' : 'student-dashboard',
+        defaultPage: 'student-dashboard',
       };
       setSuccessMsg('Вход выполнен успешно!');
       setTimeout(() => {
         if (onSwitchUser) onSwitchUser(dynamicUser);
-        onNavigate(dynamicUser.defaultPage);
+        onNavigate('student-dashboard');
       }, 400);
 
     } catch (err: any) {
