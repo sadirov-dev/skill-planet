@@ -44,38 +44,32 @@ export default function AuthPage({ theme, onNavigate, onSwitchUser }: Props) {
     try {
       const cleanEmail = email.trim().toLowerCase();
 
-      // Check if Admin account matching user's requested credentials
+      // Explicit Admin Account Check
       if (cleanEmail === 'sadirov@admin.dev') {
-        const adminAccount = accounts.find(a => a.email === 'sadirov@admin.dev') || accounts.find(a => a.role === 'admin') || accounts[2];
-        if (password === 'Dev01031990!' || password.length >= 4) {
-          setSuccessMsg('Успешный вход в аккаунт Администратора!');
-          setTimeout(() => {
-            if (onSwitchUser) onSwitchUser(adminAccount);
-            onNavigate('admin-dashboard');
-          }, 400);
-          return;
-        } else {
-          setErrorMsg('Неверный пароль для администраторского аккаунта.');
+        if (password !== 'Dev01031990!') {
+          setErrorMsg('Неверный пароль');
           setLoading(false);
           return;
         }
-      }
-
-      // Check predefined mock accounts (student / teacher / admin)
-      const matchedAccount = accounts.find(a => a.email.toLowerCase() === cleanEmail);
-      if (matchedAccount) {
-        setSuccessMsg(`Добро пожаловать, ${matchedAccount.name}!`);
+        const adminAccount = accounts[0];
+        setSuccessMsg('Успешный вход в аккаунт Администратора!');
         setTimeout(() => {
-          if (onSwitchUser) onSwitchUser(matchedAccount);
-          onNavigate(matchedAccount.defaultPage);
+          if (onSwitchUser) onSwitchUser(adminAccount);
+          onNavigate('admin-dashboard');
         }, 400);
         return;
       }
 
-      // Try Node.js Backend API
+      // Try Backend API First
       if (tab === 'login') {
         const apiRes = await loginUser({ email: cleanEmail, password });
-        if (apiRes.success && apiRes.user) {
+        if (!apiRes.success) {
+          setErrorMsg(apiRes.message || 'Ошибка входа');
+          setLoading(false);
+          return;
+        }
+
+        if (apiRes.user) {
           const newUserAcc: UserAccount = {
             id: apiRes.user.id || `u_${Date.now()}`,
             name: apiRes.user.name || name || cleanEmail.split('@')[0],
@@ -86,7 +80,7 @@ export default function AuthPage({ theme, onNavigate, onSwitchUser }: Props) {
             badgeColor: apiRes.user.role === 'admin' ? 'badge-amber' : apiRes.user.role === 'teacher' ? 'badge-violet' : 'badge-blue',
             defaultPage: apiRes.user.role === 'admin' ? 'admin-dashboard' : apiRes.user.role === 'teacher' ? 'teacher-dashboard' : 'student-dashboard',
           };
-          setSuccessMsg('Авторизация выполнена через бэкенд!');
+          setSuccessMsg('Авторизация выполнена!');
           setTimeout(() => {
             if (onSwitchUser) onSwitchUser(newUserAcc);
             onNavigate(newUserAcc.defaultPage);

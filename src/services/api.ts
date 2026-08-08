@@ -10,25 +10,30 @@ export function getAuthHeader(): Record<string, string> {
 // 🏥 Health Check
 export async function checkServerHealth() {
   try {
-    const res = await fetch(`${API_BASE}/health`);
+    const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return { success: false, message: 'Бэкенд не отвечает' };
     return await res.json();
   } catch (error) {
-    return { success: false, message: 'Не удалось подключиться к серверу Node.js' };
+    return { success: false, message: 'Ошибка подключения к серверу Node.js' };
   }
 }
 
 // 🔐 Auth APIs
 export async function loginUser(credentials: { email: string; password: string }) {
-  const res = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
-  const data = await res.json();
-  if (data.success && data.token) {
-    localStorage.setItem('skillplanet_auth_token', data.token);
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+    const data = await res.json();
+    if (data.success && data.token) {
+      localStorage.setItem('skillplanet_auth_token', data.token);
+    }
+    return data;
+  } catch (err: any) {
+    return { success: false, message: 'Ошибка соединения с бэкенд сервером' };
   }
-  return data;
 }
 
 export async function registerUser(userData: { name: string; email: string; password: string; role?: string }) {

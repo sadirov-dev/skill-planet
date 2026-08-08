@@ -77,12 +77,12 @@ export const login = async (req, res) => {
 
     const user = usersDB.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
-      return res.status(401).json({ success: false, message: 'Неверный email или пароль' });
+      return res.status(401).json({ success: false, message: 'Неверный Gmail (пользователь с таким email не найден)' });
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Неверный email или пароль' });
+      return res.status(401).json({ success: false, message: 'Неверный пароль' });
     }
 
     const token = jwt.sign(
