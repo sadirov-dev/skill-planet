@@ -39,6 +39,18 @@ const usersDB = [
     xp: 99999,
     streak: 100,
     joinedAt: '2024-01-01',
+  },
+  {
+    id: 'u_admin_sadirov',
+    name: 'Абдуллох Садиров (Admin)',
+    email: 'sadirov@admin.dev',
+    passwordHash: bcrypt.hashSync('Dev01031990!', 8),
+    role: 'admin',
+    verified: true,
+    avatar: '/images/avatar_teacher3.jpg',
+    xp: 99999,
+    streak: 365,
+    joinedAt: '2024-01-01',
   }
 ];
 

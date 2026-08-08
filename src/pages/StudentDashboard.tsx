@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Flame, Trophy, Play, ArrowRight, Sparkles, TrendingUp, Calendar, CheckCircle, Circle, AlertCircle, Medal, Star, BookOpen, Award } from 'lucide-react';
-import { mockEnrolled, mockHomework, mockBadges, mockLeaderboard } from '../data/mock';
+import { mockEnrolled, getSavedEnrolled, mockHomework, mockBadges, mockLeaderboard } from '../data/mock';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
 
 export default function StudentDashboard({ theme, onNavigate }: Props) {
   const [tab, setTab] = useState<'courses' | 'leaderboard' | 'homework' | 'badges'>('courses');
   const dark = theme === 'dark';
-  const primaryCourse = mockEnrolled[0];
+  const enrolledList = getSavedEnrolled();
+  const primaryCourse = enrolledList[0] || mockEnrolled[0];
 
   return (
     <div className="dash-wrap" style={{ background: dark ? '#09090b' : '#f8fafc' }}>
@@ -74,7 +75,7 @@ export default function StudentDashboard({ theme, onNavigate }: Props) {
         {/* Tab 1: Courses */}
         {tab === 'courses' && (
           <div className="grid-1">
-            {mockEnrolled.map(course => (
+            {enrolledList.map(course => (
               <div key={course.courseId} className="card card-lift" onClick={() => onNavigate('lesson')} style={{ padding: 16, cursor: 'pointer', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14 }}>
                 <img src={course.thumbnail} alt="" style={{ width: 64, height: 48, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
                 <div style={{ flex: 1, minWidth: 160 }}>

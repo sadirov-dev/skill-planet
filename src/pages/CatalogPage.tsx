@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, X, Star, Users, Clock, ChevronRight, BookOpen, Sparkles, ArrowRight, Play, CheckCircle, RefreshCw, Filter, Layers, MessageSquare, Headphones, FileText, Edit3, Book, Award } from 'lucide-react';
-import { mockCourses } from '../data/mock';
+import { mockCourses, getSavedCourses, saveEnrollment } from '../data/mock';
 import { fetchLiveKgsRate, formatPriceKGS, type ExchangeRateData } from '../utils/currency';
 import type { Course, CourseLevel, SkillType } from '../types';
 
@@ -334,7 +334,17 @@ export default function CatalogPage({ theme, onNavigate }: Props) {
       </div>
 
       {selectedCourse && (
-        <CourseModal course={selectedCourse} theme={theme} rate={rateData.rate} onClose={() => setSelectedCourse(null)} onEnroll={() => { setSelectedCourse(null); onNavigate('student-dashboard'); }} />
+        <CourseModal
+          course={selectedCourse}
+          theme={theme}
+          rate={rateData.rate}
+          onClose={() => setSelectedCourse(null)}
+          onEnroll={() => {
+            saveEnrollment(selectedCourse);
+            setSelectedCourse(null);
+            onNavigate('student-dashboard');
+          }}
+        />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Users, BookOpen, Star, Plus, X, Send, Check, ChevronRight, TrendingUp, Upload, FileText, MessageSquare, Clock, Edit2, Play, Eye, HelpCircle } from 'lucide-react';
-import { mockSubmissions, mockTeachers, mockCourses } from '../data/mock';
+import { mockSubmissions, mockTeachers, mockCourses, saveNewCourse } from '../data/mock';
 import type { Course } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
@@ -40,12 +40,19 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
 
   const handleSaveNewCourse = () => {
     if (!newCourseTitle.trim()) return;
+    saveNewCourse({
+      title: newCourseTitle.trim(),
+      category: newCourseCategory,
+      price: parseFloat(newCoursePrice) || 0,
+      teacherName: 'Малика Рашидова',
+      teacherAvatar: '/images/avatar_teacher1.jpg',
+    });
     setCreatedNotice(true);
     setTimeout(() => {
       setShowModal(false);
       setCreatedNotice(false);
       setNewCourseTitle('');
-    }, 1500);
+    }, 1200);
   };
 
   return (

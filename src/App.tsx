@@ -44,7 +44,7 @@ function App() {
   const renderPage = () => {
     // Isolated rendering by role
     if (currentPage === 'auth') {
-      return <AuthPage {...pageProps} />;
+      return <AuthPage {...pageProps} onSwitchUser={handleSwitchUser} />;
     }
 
     if (currentUser.role === 'teacher') {

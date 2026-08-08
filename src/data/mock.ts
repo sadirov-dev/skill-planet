@@ -436,3 +436,88 @@ export const mockSubmissions: Homework[] = [
   { id: 's1', title: 'Writing: Essay Submission', courseName: 'General English', studentName: 'Алинур Каримов', dueDate: '2026-07-30', status: 'submitted' },
   { id: 's2', title: 'Grammar: Past Tense Quiz', courseName: 'General English', studentName: 'Жасур Усманов', dueDate: '2026-07-28', status: 'submitted' },
 ];
+
+// ───── LOCAL STORAGE HELPER FUNCTIONS ─────
+const CUSTOM_COURSES_KEY = 'skillplanet_custom_courses';
+const ENROLLED_COURSES_KEY = 'skillplanet_user_enrolled';
+
+export function getSavedCourses(): Course[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CUSTOM_COURSES_KEY) || '[]');
+    return [...mockCourses, ...saved];
+  } catch {
+    return mockCourses;
+  }
+}
+
+export function saveNewCourse(courseData: Partial<Course>): Course {
+  const newCourse: Course = {
+    id: `c_custom_${Date.now()}`,
+    title: courseData.title || 'Новый курс',
+    description: courseData.description || 'Описание нового курса',
+    category: courseData.category || 'IT & AI',
+    level: courseData.level || 'Beginner',
+    levelsSupported: ['Beginner', 'Intermediate'],
+    rating: 5.0,
+    reviewCount: 1,
+    teacherName: courseData.teacherName || 'Преподаватель',
+    teacherAvatar: courseData.teacherAvatar || '/images/avatar_teacher1.jpg',
+    price: courseData.price ?? 0,
+    priceType: (courseData.price ?? 0) === 0 ? 'free' : 'paid',
+    thumbnail: courseData.thumbnail || (courseData.category === 'IT & AI' ? '/images/course_python.jpg' : courseData.category === 'Языки' ? '/images/course_english.jpg' : '/images/course_chess.jpg'),
+    duration: courseData.duration || '40 часов',
+    studentsCount: 1,
+    tags: ['Новый курс', courseData.category || 'General'],
+    approved: true,
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(CUSTOM_COURSES_KEY) || '[]');
+    const updated = [newCourse, ...saved];
+    localStorage.setItem(CUSTOM_COURSES_KEY, JSON.stringify(updated));
+    mockCourses.unshift(newCourse);
+  } catch (e) {
+    console.error(e);
+  }
+
+  return newCourse;
+}
+
+export function getSavedEnrolled(): EnrolledCourse[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem(ENROLLED_COURSES_KEY) || '[]');
+    return [...mockEnrolled, ...saved];
+  } catch {
+    return mockEnrolled;
+  }
+}
+
+export function saveEnrollment(course: Course): EnrolledCourse {
+  const newEnrollment: EnrolledCourse = {
+    courseId: course.id,
+    title: course.title,
+    teacherName: course.teacherName,
+    progress: 5,
+    thumbnail: course.thumbnail,
+    category: course.category,
+    lastLesson: 'Введение в курс',
+    nextLesson: 'Урок 1: Базовые понятия',
+    totalLessons: 24,
+    completedLessons: 1,
+    level: course.level,
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(ENROLLED_COURSES_KEY) || '[]');
+    if (!saved.some((e: EnrolledCourse) => e.courseId === course.id) && !mockEnrolled.some(e => e.courseId === course.id)) {
+      const updated = [newEnrollment, ...saved];
+      localStorage.setItem(ENROLLED_COURSES_KEY, JSON.stringify(updated));
+      mockEnrolled.unshift(newEnrollment);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  return newEnrollment;
+}
+

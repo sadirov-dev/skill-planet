@@ -35,6 +35,16 @@ export const accounts: UserAccount[] = [
     defaultPage: 'teacher-dashboard',
   },
   {
+    id: 'u_admin_sadirov',
+    name: 'Абдуллох Садиров',
+    email: 'sadirov@admin.dev',
+    role: 'admin',
+    roleTitle: 'Супер Админ',
+    avatar: '/images/avatar_teacher3.jpg',
+    badgeColor: 'badge-amber',
+    defaultPage: 'admin-dashboard',
+  },
+  {
     id: 'u8',
     name: 'Отабек Мирзаев',
     email: 'admin@skillplanet.uz',

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Users, BookOpen, DollarSign, TrendingUp, ShieldCheck, ShieldX, CheckCircle, XCircle, Search, Filter, Activity, GraduationCap, UserCheck, AlertTriangle, PhoneCall, Code2, Mail, MessageSquare, Send } from 'lucide-react';
-import { mockUsers, mockCourses, mockTeachers, mockActivityLogs, platformStats } from '../data/mock';
+import { mockUsers, mockCourses, mockTeachers, mockActivityLogs, platformStats, saveNewCourse } from '../data/mock';
+import { Plus, X, Upload } from 'lucide-react';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
 
@@ -18,6 +19,13 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
   const [verified, setVerified] = useState<Set<string>>(new Set(['u1', 'u2', 'u5', 'u8']));
   const [supportMessage, setSupportMessage] = useState('');
   const [supportSent, setSupportSent] = useState(false);
+
+  // Admin Course Creation modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newCategory, setNewCategory] = useState('IT & AI');
+  const [newPrice, setNewPrice] = useState('0');
+  const [createdNotice, setCreatedNotice] = useState(false);
 
   const dark = theme === 'dark';
 
@@ -37,14 +45,19 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
   return (
     <div className="dash-wrap" style={{ background: dark ? '#09090b' : '#f8fafc' }}>
       <div className="dash-content">
-        <div>
-          <span className="section-label">🛡️ Кабинет Главного Администратора</span>
-          <h1 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-0.03em', color: dark ? '#f4f4f5' : '#0f172a', marginTop: 4 }}>
-            Центр Управления Платформой
-          </h1>
-          <p style={{ fontSize: 13, color: dark ? '#71717a' : '#64748b', marginTop: 2 }}>
-            Полный контроль пользователей, аналитики, списков учителей/учеников и обращений к разработчикам
-          </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
+          <div>
+            <span className="section-label">🛡️ Кабинет Главного Администратора</span>
+            <h1 style={{ fontSize: 'clamp(22px,4vw,30px)', fontWeight: 900, letterSpacing: '-0.03em', color: dark ? '#f4f4f5' : '#0f172a', marginTop: 4 }}>
+              Центр Управления Платформой
+            </h1>
+            <p style={{ fontSize: 13, color: dark ? '#71717a' : '#64748b', marginTop: 2 }}>
+              Полный контроль пользователей, аналитики, списков учителей/учеников и обращений к разработчикам
+            </p>
+          </div>
+          <button className="btn btn-md btn-primary" onClick={() => setShowCreateModal(true)}>
+            <Plus size={16} /> Добавить новый курс
+          </button>
         </div>
 
         {/* Navigation Tabs */}
@@ -309,6 +322,69 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
           </div>
         )}
       </div>
+
+      {/* Admin Create Course Modal */}
+      {showCreateModal && (
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()} style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Создать и опубликовать курс (Админ)</h2>
+              <button onClick={() => setShowCreateModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' }}><X size={18} /></button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#71717a', display: 'block', marginBottom: 4 }}>Название курса</label>
+                <input className="input" placeholder="Например: Продвинутый курс по веб-безопасности" value={newTitle} onChange={e => setNewTitle(e.target.value)} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#71717a', display: 'block', marginBottom: 4 }}>Категория</label>
+                <select className="input" value={newCategory} onChange={e => setNewCategory(e.target.value)}>
+                  <option value="IT & AI">IT & AI</option>
+                  <option value="Языки">Языки</option>
+                  <option value="Шахматы">Шахматы</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#71717a', display: 'block', marginBottom: 4 }}>Стоимость ($)</label>
+                <input className="input" type="number" placeholder="0 для бесплатного" value={newPrice} onChange={e => setNewPrice(e.target.value)} />
+              </div>
+
+              <div className="upload-zone">
+                <Upload size={24} color="#60a5fa" style={{ margin: '0 auto 8px' }} />
+                <p style={{ fontSize: 13, fontWeight: 600, color: dark ? '#f4f4f5' : '#0f172a' }}>Загрузить материалы курса (.mp4 / .pdf)</p>
+              </div>
+
+              {createdNotice ? (
+                <div style={{ padding: 14, borderRadius: 12, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#34d399', fontSize: 13, fontWeight: 700, textAlign: 'center' }}>
+                  ✓ Курс моментально опубликован на платформе!
+                </div>
+              ) : (
+                <button
+                  className="btn btn-lg btn-primary"
+                  onClick={() => {
+                    if (!newTitle.trim()) return;
+                    saveNewCourse({
+                      title: newTitle.trim(),
+                      category: newCategory,
+                      price: parseFloat(newPrice) || 0,
+                      teacherName: 'Абдуллох Садиров (Admin)',
+                      teacherAvatar: '/images/avatar_teacher3.jpg',
+                    });
+                    setCreatedNotice(true);
+                    setTimeout(() => {
+                      setShowCreateModal(false);
+                      setCreatedNotice(false);
+                      setNewTitle('');
+                    }, 1200);
+                  }}
+                >
+                  Опубликовать на платформе
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
