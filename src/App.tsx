@@ -11,8 +11,8 @@ import LessonPage from './pages/LessonPage';
 import GlobalAiWidget from './components/common/GlobalAiWidget';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('student-dashboard');
-  const [currentUser, setCurrentUser] = useState<UserAccount>(accounts[0]); // Default Student
+  const [currentPage, setCurrentPage] = useState<Page>('admin-dashboard');
+  const [currentUser, setCurrentUser] = useState<UserAccount>(accounts[0]); // Default Admin (sadirov@admin.dev)
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('sp-theme') as Theme) || 'dark';
   });
