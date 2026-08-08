@@ -123,7 +123,7 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
                 <div key={sub.id} className="card" style={{ padding: 20 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <img src="/images/avatar_teacher2.png" alt="" className="avatar" style={{ width: 36, height: 36 }} />
+                      <img src="/images/avatar_teacher2.jpg" alt="" className="avatar" style={{ width: 36, height: 36 }} />
                       <div>
                         <h3 style={{ fontSize: 14, fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{sub.studentName}</h3>
                         <div style={{ fontSize: 12, color: dark ? '#71717a' : '#64748b' }}>{sub.title} · {sub.courseName}</div>
@@ -171,9 +171,9 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
                 </thead>
                 <tbody>
                   {[
-                    { name: 'Алинур Каримов', email: 'alinur@gmail.com', course: 'English: Business & Tech', progress: '60%', avatar: '/images/avatar_teacher2.png' },
-                    { name: 'Жасур Усманов', email: 'jasur@gmail.com', course: 'English: Business & Tech', progress: '35%', avatar: '/images/avatar_teacher3.png' },
-                    { name: 'Дилноза Юлдашева', email: 'dilnoza@mail.ru', course: 'IELTS Preparation Pro', progress: '80%', avatar: '/images/avatar_teacher1.png' },
+                    { name: 'Алинур Каримов', email: 'alinur@gmail.com', course: 'English: Business & Tech', progress: '60%', avatar: '/images/avatar_teacher2.jpg' },
+                    { name: 'Жасур Усманов', email: 'jasur@gmail.com', course: 'English: Business & Tech', progress: '35%', avatar: '/images/avatar_teacher3.jpg' },
+                    { name: 'Дилноза Юлдашева', email: 'dilnoza@mail.ru', course: 'IELTS Preparation Pro', progress: '80%', avatar: '/images/avatar_teacher1.jpg' },
                   ].map((s, idx) => (
                     <tr key={idx}>
                       <td>

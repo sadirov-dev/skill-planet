@@ -12,10 +12,10 @@ export const mockCourses: Course[] = [
     rating: 4.9,
     reviewCount: 2890,
     teacherName: 'Малика Рашидова',
-    teacherAvatar: '/images/avatar_teacher1.png',
+    teacherAvatar: '/images/avatar_teacher1.jpg',
     price: 49,
     priceType: 'paid',
-    thumbnail: '/images/course_english.png',
+    thumbnail: '/images/course_english.jpg',
     duration: '120 часов',
     studentsCount: 7850,
     tags: ['English', 'Grammar', 'Speaking', 'IELTS'],
@@ -142,10 +142,10 @@ export const mockCourses: Course[] = [
     rating: 4.9,
     reviewCount: 2340,
     teacherName: 'Акмал Юсупов',
-    teacherAvatar: '/images/avatar_teacher2.png',
+    teacherAvatar: '/images/avatar_teacher2.jpg',
     price: 0,
     priceType: 'free',
-    thumbnail: '/images/course_python.png',
+    thumbnail: '/images/course_python.jpg',
     duration: '42 часа',
     studentsCount: 8420,
     tags: ['Python', 'AI', 'Data Science'],
@@ -202,10 +202,10 @@ export const mockCourses: Course[] = [
     rating: 4.7,
     reviewCount: 876,
     teacherName: 'Дилшод Мирзаев',
-    teacherAvatar: '/images/avatar_teacher3.png',
+    teacherAvatar: '/images/avatar_teacher3.jpg',
     price: 29,
     priceType: 'paid',
-    thumbnail: '/images/course_chess.png',
+    thumbnail: '/images/course_chess.jpg',
     duration: '18 часов',
     studentsCount: 1850,
     tags: ['Chess', 'Strategy', 'Opening'],
@@ -233,10 +233,10 @@ export const mockCourses: Course[] = [
     rating: 4.9,
     reviewCount: 3120,
     teacherName: 'Бобур Каримов',
-    teacherAvatar: '/images/avatar_teacher2.png',
+    teacherAvatar: '/images/avatar_teacher2.jpg',
     price: 0,
     priceType: 'free',
-    thumbnail: '/images/course_webdev.png',
+    thumbnail: '/images/course_webdev.jpg',
     duration: '55 часов',
     studentsCount: 12400,
     tags: ['React', 'Node.js', 'TypeScript'],
@@ -264,10 +264,10 @@ export const mockCourses: Course[] = [
     rating: 4.6,
     reviewCount: 540,
     teacherName: 'Умар Хасанов',
-    teacherAvatar: '/images/avatar_teacher3.png',
+    teacherAvatar: '/images/avatar_teacher3.jpg',
     price: 35,
     priceType: 'paid',
-    thumbnail: '/images/course_arabic.png',
+    thumbnail: '/images/course_arabic.jpg',
     duration: '22 часа',
     studentsCount: 980,
     tags: ['Arabic', 'Language', 'Grammar'],
@@ -295,10 +295,10 @@ export const mockCourses: Course[] = [
     rating: 4.5,
     reviewCount: 234,
     teacherName: 'Санжар Тошматов',
-    teacherAvatar: '/images/avatar_teacher3.png',
+    teacherAvatar: '/images/avatar_teacher3.jpg',
     price: 19,
     priceType: 'paid',
-    thumbnail: '/images/course_go.png',
+    thumbnail: '/images/course_go.jpg',
     duration: '15 часов',
     studentsCount: 420,
     tags: ['Go', 'Board Games', 'Strategy'],
@@ -320,40 +320,40 @@ export const mockCourses: Course[] = [
 // ───── USERS ─────
 export const mockUsers: User[] = [
   { id: 'u1', name: 'Алинур Каримов', email: 'alinur@gmail.com', role: 'student', verified: true, banned: false, joinedAt: '2025-03-12', xp: 4850 },
-  { id: 'u2', name: 'Малика Рашидова', email: 'malika@gmail.com', role: 'teacher', verified: true, banned: false, joinedAt: '2024-11-05', avatar: '/images/avatar_teacher1.png', subject: 'English (A1 - C1)' },
+  { id: 'u2', name: 'Малика Рашидова', email: 'malika@gmail.com', role: 'teacher', verified: true, banned: false, joinedAt: '2024-11-05', avatar: '/images/avatar_teacher1.jpg', subject: 'English (A1 - C1)' },
   { id: 'u3', name: 'Жасур Усманов', email: 'jasur@gmail.com', role: 'student', verified: false, banned: false, joinedAt: '2026-01-20', xp: 3200 },
   { id: 'u4', name: 'Дилноза Юлдашева', email: 'dilnoza@mail.ru', role: 'student', verified: true, banned: false, joinedAt: '2025-08-14', xp: 2900 },
-  { id: 'u5', name: 'Бобур Каримов', email: 'bobur@gmail.com', role: 'teacher', verified: true, banned: false, joinedAt: '2024-09-01', avatar: '/images/avatar_teacher2.png', subject: 'Web Dev (React + Node)' },
-  { id: 'u6', name: 'Санжар Тошматов', email: 'sanjat@gmail.com', role: 'teacher', verified: false, banned: false, joinedAt: '2026-05-10', avatar: '/images/avatar_teacher3.png', subject: 'Chess & Go' },
+  { id: 'u5', name: 'Бобур Каримов', email: 'bobur@gmail.com', role: 'teacher', verified: true, banned: false, joinedAt: '2024-09-01', avatar: '/images/avatar_teacher2.jpg', subject: 'Web Dev (React + Node)' },
+  { id: 'u6', name: 'Санжар Тошматов', email: 'sanjat@gmail.com', role: 'teacher', verified: false, banned: false, joinedAt: '2026-05-10', avatar: '/images/avatar_teacher3.jpg', subject: 'Chess & Go' },
   { id: 'u7', name: 'Нилуфар Холматова', email: 'nilufar@gmail.com', role: 'student', verified: true, banned: true, joinedAt: '2025-06-22', xp: 1200 },
   { id: 'u8', name: 'Отабек Мирзаев', email: 'otabek@gmail.com', role: 'admin', verified: true, banned: false, joinedAt: '2024-01-15' },
 ];
 
 // ───── LEADERBOARD ─────
 export const mockLeaderboard: LeaderboardEntry[] = [
-  { rank: 1, id: 'u1', name: 'Алинур Каримов', avatar: '/images/avatar_teacher2.png', xp: 4850, streak: 5, coursesCompleted: 4, badge: '👑 Top Student' },
-  { rank: 2, id: 'l2', name: 'Камола Эшматова', avatar: '/images/avatar_teacher1.png', xp: 4120, streak: 12, coursesCompleted: 3, badge: '🔥 English Master' },
-  { rank: 3, id: 'l3', name: 'Жасур Усманов', avatar: '/images/avatar_teacher3.png', xp: 3900, streak: 8, coursesCompleted: 3, badge: '⚡ Speed Learner' },
-  { rank: 4, id: 'l4', name: 'Дилноза Юлдашева', avatar: '/images/avatar_teacher1.png', xp: 3450, streak: 4, coursesCompleted: 2, badge: '🌟 English Pro' },
-  { rank: 5, id: 'l5', name: 'Фарход Нурматов', avatar: '/images/avatar_teacher3.png', xp: 3100, streak: 15, coursesCompleted: 2, badge: '♟️ Chess Grandmaster' },
+  { rank: 1, id: 'u1', name: 'Алинур Каримов', avatar: '/images/avatar_teacher2.jpg', xp: 4850, streak: 5, coursesCompleted: 4, badge: '👑 Top Student' },
+  { rank: 2, id: 'l2', name: 'Камола Эшматова', avatar: '/images/avatar_teacher1.jpg', xp: 4120, streak: 12, coursesCompleted: 3, badge: '🔥 English Master' },
+  { rank: 3, id: 'l3', name: 'Жасур Усманов', avatar: '/images/avatar_teacher3.jpg', xp: 3900, streak: 8, coursesCompleted: 3, badge: '⚡ Speed Learner' },
+  { rank: 4, id: 'l4', name: 'Дилноза Юлдашева', avatar: '/images/avatar_teacher1.jpg', xp: 3450, streak: 4, coursesCompleted: 2, badge: '🌟 English Pro' },
+  { rank: 5, id: 'l5', name: 'Фарход Нурматов', avatar: '/images/avatar_teacher3.jpg', xp: 3100, streak: 15, coursesCompleted: 2, badge: '♟️ Chess Grandmaster' },
 ];
 
 // ───── TEACHER DIRECTORY ─────
 export const mockTeachers: TeacherDirectory[] = [
-  { id: 't1', name: 'Малика Рашидова', avatar: '/images/avatar_teacher1.png', subject: 'General English (A1 - C1)', category: 'Языки', rating: 4.9, studentsCount: 7850, coursesCount: 3, verified: true },
-  { id: 't2', name: 'Бобур Каримов', avatar: '/images/avatar_teacher2.png', subject: 'Web Dev (React + Node)', category: 'IT & AI', rating: 4.9, studentsCount: 12400, coursesCount: 4, verified: true },
-  { id: 't3', name: 'Акмал Юсупов', avatar: '/images/avatar_teacher2.png', subject: 'Python & AI / Data Science', category: 'IT & AI', rating: 4.9, studentsCount: 8420, coursesCount: 2, verified: true },
-  { id: 't4', name: 'Дилшод Мирзаев', avatar: '/images/avatar_teacher3.png', subject: 'Шахматная стратегия FIDE', category: 'Шахматы', rating: 4.7, studentsCount: 1850, coursesCount: 2, verified: true },
-  { id: 't5', name: 'Умар Хасанов', avatar: '/images/avatar_teacher3.png', subject: 'Арабский язык & Грамматика', category: 'Языки', rating: 4.6, studentsCount: 980, coursesCount: 1, verified: true },
+  { id: 't1', name: 'Малика Рашидова', avatar: '/images/avatar_teacher1.jpg', subject: 'General English (A1 - C1)', category: 'Языки', rating: 4.9, studentsCount: 7850, coursesCount: 3, verified: true },
+  { id: 't2', name: 'Бобур Каримов', avatar: '/images/avatar_teacher2.jpg', subject: 'Web Dev (React + Node)', category: 'IT & AI', rating: 4.9, studentsCount: 12400, coursesCount: 4, verified: true },
+  { id: 't3', name: 'Акмал Юсупов', avatar: '/images/avatar_teacher2.jpg', subject: 'Python & AI / Data Science', category: 'IT & AI', rating: 4.9, studentsCount: 8420, coursesCount: 2, verified: true },
+  { id: 't4', name: 'Дилшод Мирзаев', avatar: '/images/avatar_teacher3.jpg', subject: 'Шахматная стратегия FIDE', category: 'Шахматы', rating: 4.7, studentsCount: 1850, coursesCount: 2, verified: true },
+  { id: 't5', name: 'Умар Хасанов', avatar: '/images/avatar_teacher3.jpg', subject: 'Арабский язык & Грамматика', category: 'Языки', rating: 4.6, studentsCount: 980, coursesCount: 1, verified: true },
 ];
 
 // ───── ACTIVITY LOGS ─────
 export const mockActivityLogs: ActivityLog[] = [
-  { id: 'a1', userName: 'Алинур Каримов', userRole: 'student', avatar: '/images/avatar_teacher2.png', action: 'Завершил тест', target: 'Beginner English Grammar Test (100%)', timestamp: '5 мин назад' },
-  { id: 'a2', userName: 'Малика Рашидова', userRole: 'teacher', avatar: '/images/avatar_teacher1.png', action: 'Проверила ДЗ', target: 'Writing Self-Introduction (95/100)', timestamp: '18 мин назад' },
-  { id: 'a3', userName: 'Жасур Усманов', userRole: 'student', avatar: '/images/avatar_teacher3.png', action: 'Записался на курс', target: 'General & Business English', timestamp: '42 мин назад' },
-  { id: 'a4', userName: 'Санжар Тошматов', userRole: 'teacher', avatar: '/images/avatar_teacher3.png', action: 'Отправил курс на модерацию', target: 'Go: Стратегическое мышление', timestamp: '2 часа назад' },
-  { id: 'a5', userName: 'Отабек Мирзаев', userRole: 'admin', avatar: '/images/avatar_teacher3.png', action: 'Верифицировал учителя', target: 'Малика Рашидова', timestamp: '4 часа назад' },
+  { id: 'a1', userName: 'Алинур Каримов', userRole: 'student', avatar: '/images/avatar_teacher2.jpg', action: 'Завершил тест', target: 'Beginner English Grammar Test (100%)', timestamp: '5 мин назад' },
+  { id: 'a2', userName: 'Малика Рашидова', userRole: 'teacher', avatar: '/images/avatar_teacher1.jpg', action: 'Проверила ДЗ', target: 'Writing Self-Introduction (95/100)', timestamp: '18 мин назад' },
+  { id: 'a3', userName: 'Жасур Усманов', userRole: 'student', avatar: '/images/avatar_teacher3.jpg', action: 'Записался на курс', target: 'General & Business English', timestamp: '42 мин назад' },
+  { id: 'a4', userName: 'Санжар Тошматов', userRole: 'teacher', avatar: '/images/avatar_teacher3.jpg', action: 'Отправил курс на модерацию', target: 'Go: Стратегическое мышление', timestamp: '2 часа назад' },
+  { id: 'a5', userName: 'Отабек Мирзаев', userRole: 'admin', avatar: '/images/avatar_teacher3.jpg', action: 'Верифицировал учителя', target: 'Малика Рашидова', timestamp: '4 часа назад' },
 ];
 
 // ───── HOMEWORK (Categorized by Skills) ─────
@@ -381,7 +381,7 @@ export const mockEnrolled: EnrolledCourse[] = [
     title: 'General & Business English',
     teacherName: 'Малика Рашидова',
     progress: 45,
-    thumbnail: '/images/course_english.png',
+    thumbnail: '/images/course_english.jpg',
     category: 'Языки',
     lastLesson: 'Verb "To Be"',
     nextLesson: 'Listening: Dialogues in a Café',
@@ -394,7 +394,7 @@ export const mockEnrolled: EnrolledCourse[] = [
     title: 'Python & AI: Полный курс',
     teacherName: 'Акмал Юсупов',
     progress: 60,
-    thumbnail: '/images/course_python.png',
+    thumbnail: '/images/course_python.jpg',
     category: 'IT & AI',
     lastLesson: 'Переменные и типы данных',
     nextLesson: 'Управляющие конструкции',
@@ -407,7 +407,7 @@ export const mockEnrolled: EnrolledCourse[] = [
     title: 'Шахматы: Стратегия Чемпионов',
     teacherName: 'Дилшод Мирзаев',
     progress: 15,
-    thumbnail: '/images/course_chess.png',
+    thumbnail: '/images/course_chess.jpg',
     category: 'Шахматы',
     lastLesson: 'Правила и нотация',
     nextLesson: 'Испанская партия',
@@ -428,8 +428,8 @@ export const platformStats = {
 };
 
 export const mockTestimonials = [
-  { id: 't1', name: 'Камола Эшматова', role: 'Студентка (B2)', avatar: '/images/avatar_teacher1.png', text: 'Пройти путь от Beginner до Upper-Intermediate оказалось легко благодаря четкой структуре!', rating: 5 },
-  { id: 't2', name: 'Фарход Нурматов', role: 'Шахматист', avatar: '/images/avatar_teacher3.png', text: 'Уроки по Грамматике и Listening великолепны.', rating: 5 }
+  { id: 't1', name: 'Камола Эшматова', role: 'Студентка (B2)', avatar: '/images/avatar_teacher1.jpg', text: 'Пройти путь от Beginner до Upper-Intermediate оказалось легко благодаря четкой структуре!', rating: 5 },
+  { id: 't2', name: 'Фарход Нурматов', role: 'Шахматист', avatar: '/images/avatar_teacher3.jpg', text: 'Уроки по Грамматике и Listening великолепны.', rating: 5 }
 ];
 
 export const mockSubmissions: Homework[] = [

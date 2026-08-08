@@ -124,7 +124,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
                       <tr key={u.id} style={{ opacity: isBanned ? 0.4 : 1 }}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <img src={u.avatar || '/images/avatar_teacher2.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                            <img src={u.avatar || '/images/avatar_teacher2.jpg'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
                             <div>
                               <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
                               <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
@@ -184,7 +184,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
                       <tr key={u.id} style={{ opacity: isBanned ? 0.4 : 1 }}>
                         <td>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <img src={u.avatar || '/images/avatar_teacher1.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                            <img src={u.avatar || '/images/avatar_teacher1.jpg'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
                             <div>
                               <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
                               <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
@@ -236,7 +236,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
                     <tr key={u.id}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <img src={u.avatar || '/images/avatar_teacher3.png'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
+                          <img src={u.avatar || '/images/avatar_teacher3.jpg'} alt="" className="avatar" style={{ width: 32, height: 32 }} />
                           <div>
                             <div style={{ fontWeight: 700, color: dark ? '#f4f4f5' : '#0f172a' }}>{u.name}</div>
                             <div style={{ fontSize: 11, color: '#71717a' }}>{u.email}</div>
@@ -259,7 +259,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
           <div className="grid-1">
             <div className="card" style={{ padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <img src="/images/course_go.png" alt="" style={{ width: 64, height: 48, borderRadius: 10, objectFit: 'cover' }} />
+                <img src="/images/course_go.jpg" alt="" style={{ width: 64, height: 48, borderRadius: 10, objectFit: 'cover' }} />
                 <div>
                   <h3 style={{ fontSize: 15, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>Go: Стратегическое мышление</h3>
                   <div style={{ fontSize: 12, color: dark ? '#71717a' : '#64748b', marginTop: 2 }}>Санжар Тошматов · Шахматы / Игра Го</div>

@@ -200,7 +200,7 @@ export default function LessonPage({ theme, onNavigate }: Props) {
               <>
                 {/* Video Player */}
                 <div className="video-bg" style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                  <img src="/images/course_python.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
+                  <img src="/images/course_python.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3 }} />
                   <div style={{ position: 'absolute', textAlign: 'center', padding: '0 12px' }}>
                     <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg,#3b82f6,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px', boxShadow: '0 0 40px rgba(59,130,246,0.5)', cursor: 'pointer' }}>
                       <Play size={24} fill="#fff" color="#fff" style={{ marginLeft: 3 }} />
