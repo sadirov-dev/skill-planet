@@ -337,14 +337,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ theme, onNavigate }) => {
                 "{t.text}"
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{
-                  width: 38, height: 38, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2))',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 18, border: `1px solid ${T.border}`,
-                }}>
-                  {t.avatar}
-                </div>
+                <img
+                  src={t.avatar}
+                  alt={t.name}
+                  style={{
+                    width: 38, height: 38, borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: `1px solid ${T.border}`,
+                  }}
+                />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: T.text }}>{t.name}</div>
                   <div style={{ fontSize: 12, color: T.muted }}>{t.role}</div>
