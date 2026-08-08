@@ -444,7 +444,10 @@ const ENROLLED_COURSES_KEY = 'skillplanet_user_enrolled';
 export function getSavedCourses(): Course[] {
   try {
     const saved = JSON.parse(localStorage.getItem(CUSTOM_COURSES_KEY) || '[]');
-    return [...mockCourses, ...saved];
+    if (saved.length > 0) {
+      return saved; // Completely replace demo courses with real user courses!
+    }
+    return mockCourses;
   } catch {
     return mockCourses;
   }
@@ -481,6 +484,16 @@ export function saveNewCourse(courseData: Partial<Course>): Course {
   }
 
   return newCourse;
+}
+
+export function deleteCourse(id: string) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CUSTOM_COURSES_KEY) || '[]');
+    const updated = saved.filter((c: Course) => c.id !== id);
+    localStorage.setItem(CUSTOM_COURSES_KEY, JSON.stringify(updated));
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 export function getSavedEnrolled(): EnrolledCourse[] {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, BookOpen, Star, Plus, X, Send, Check, ChevronRight, TrendingUp, Upload, FileText, MessageSquare, Clock, Edit2, Play, Eye, HelpCircle } from 'lucide-react';
-import { mockSubmissions, mockTeachers, mockCourses, saveNewCourse } from '../data/mock';
+import { mockSubmissions, mockTeachers, mockCourses, saveNewCourse, getSavedCourses, deleteCourse } from '../data/mock';
 import type { Course } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
@@ -110,14 +110,14 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
         {/* Tab 1: My Courses, Video & Quiz Creator */}
         {tab === 'overview' && (
           <div className="grid-1">
-            {mockCourses.slice(0, 3).map((c) => (
+            {getSavedCourses().map((c) => (
               <div key={c.id} className="card" style={{ padding: 20, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                   <img src={c.thumbnail} alt="" style={{ width: 80, height: 56, borderRadius: 10, objectFit: 'cover' }} />
                   <div>
                     <h3 style={{ fontSize: 16, fontWeight: 800, color: dark ? '#f4f4f5' : '#0f172a' }}>{c.title}</h3>
                     <div style={{ fontSize: 12, color: dark ? '#71717a' : '#64748b', marginTop: 4 }}>
-                      {c.studentsCount.toLocaleString()} записанных студентов · ★ {c.rating} · {c.duration}
+                      Категория: {c.category} · ★ {c.rating} · {c.duration}
                     </div>
                   </div>
                 </div>
@@ -125,6 +125,15 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <button className="btn btn-sm btn-ghost" onClick={() => handleOpenEdit(c)}>
                     <Edit2 size={13} /> Редактировать видео и тесты
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => {
+                      deleteCourse(c.id);
+                      window.location.reload();
+                    }}
+                  >
+                    Удалить
                   </button>
                 </div>
               </div>

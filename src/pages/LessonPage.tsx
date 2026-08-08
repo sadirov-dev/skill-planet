@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { CheckCircle, Circle, Play, ChevronLeft, ChevronRight, Upload, Send, Bot, X, BookOpen, Clock, HelpCircle, Award, Check, Sparkles, Loader2, Cpu, Zap } from 'lucide-react';
-import { mockCourses } from '../data/mock';
+import { mockCourses, getSavedCourses } from '../data/mock';
 import { askAiAssistant, AI_MODELS, type AiModelId } from '../services/aiService';
 import type { QuizQuestion } from '../types';
 
 interface Props { theme: 'dark' | 'light'; onNavigate: (p: string) => void; }
 
 export default function LessonPage({ theme, onNavigate }: Props) {
-  const course = mockCourses[0];
+  const coursesList = getSavedCourses();
+  const course = coursesList[0] || mockCourses[0];
   const [activeLesson, setActiveLesson] = useState('l3');
   const [completed, setCompleted] = useState<Set<string>>(new Set(['l1', 'l2']));
   const [sidebarOpen, setSidebarOpen] = useState(false);

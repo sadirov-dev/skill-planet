@@ -187,7 +187,7 @@ export default function CatalogPage({ theme, onNavigate }: Props) {
   }, []);
 
   const filtered = useMemo(() => {
-    return mockCourses.filter(c => {
+    return getSavedCourses().filter(c => {
       const matchCat = activeCategory === 'Все' || c.category === activeCategory;
       const matchLvl = activeLevel === 'All' || c.level === activeLevel || (c.levelsSupported && c.levelsSupported.includes(activeLevel));
       const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
