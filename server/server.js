@@ -22,6 +22,23 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root Welcome Route
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: '🚀 SkillPlanet Node.js Express API Server',
+    status: 'online',
+    endpoints: {
+      health: 'GET /api/health',
+      courses: 'GET /api/courses',
+      authLogin: 'POST /api/auth/login',
+      authRegister: 'POST /api/auth/register',
+      aiChat: 'POST /api/ai/chat',
+      leaderboard: 'GET /api/leaderboard',
+    }
+  });
+});
+
 // Health Check Endpoint
 app.get('/api/health', (req, res) => {
   res.json({
