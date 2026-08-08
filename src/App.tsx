@@ -47,6 +47,29 @@ function App() {
       return <AuthPage {...pageProps} onSwitchUser={handleSwitchUser} />;
     }
 
+    // Unconfirmed Teacher Status Screen
+    if (currentUser.teacherPending) {
+      return (
+        <div style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, textAlign: 'center' }}>
+          <div style={{ width: 72, height: 72, borderRadius: 24, background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+            <span style={{ fontSize: 36 }}>⏳</span>
+          </div>
+          <span className="badge badge-amber" style={{ fontSize: 12, padding: '6px 14px', marginBottom: 12 }}>
+            На модерации администратора
+          </span>
+          <h1 style={{ fontSize: 26, fontWeight: 900, color: theme === 'dark' ? '#f4f4f5' : '#0f172a', marginBottom: 10, letterSpacing: '-0.02em' }}>
+            Статус не подтверждён
+          </h1>
+          <p style={{ fontSize: 14, color: theme === 'dark' ? '#a1a1aa' : '#64748b', maxWidth: 440, lineHeight: 1.6, marginBottom: 28 }}>
+            Ваша заявка на статус Преподавателя находится на проверке у Главного Администратора. Кабинет учителя недоступен до официального подтверждения.
+          </p>
+          <button className="btn btn-ghost" onClick={() => handleNavigate('auth')} style={{ padding: '10px 20px', fontSize: 13 }}>
+            🚪 Выйти / Сменить аккаунт
+          </button>
+        </div>
+      );
+    }
+
     if (currentUser.role === 'teacher') {
       return <TeacherDashboard {...pageProps} />;
     }

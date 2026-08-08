@@ -12,6 +12,7 @@ export interface UserAccount {
   avatar: string;
   badgeColor: string;
   defaultPage: Page;
+  teacherPending?: boolean;
 }
 
 export const ADMIN_SADIROV: UserAccount = {

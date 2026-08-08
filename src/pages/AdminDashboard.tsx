@@ -309,7 +309,7 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
                         // Approve Teacher
                         try {
                           const savedAccs: any[] = JSON.parse(localStorage.getItem('skillplanet_saved_accounts_v1') || '[]');
-                          const updated = savedAccs.map(a => a.id === reqItem.id ? { ...a, role: 'teacher', roleTitle: 'Преподаватель', badgeColor: 'badge-violet', defaultPage: 'teacher-dashboard' } : a);
+                          const updated = savedAccs.map(a => a.id === reqItem.id ? { ...a, role: 'teacher', teacherPending: false, roleTitle: 'Преподаватель', badgeColor: 'badge-violet', defaultPage: 'teacher-dashboard' } : a);
                           localStorage.setItem('skillplanet_saved_accounts_v1', JSON.stringify(updated));
 
                           const remaining = pending.filter(p => p.id !== reqItem.id);

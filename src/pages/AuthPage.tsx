@@ -95,8 +95,9 @@ export default function AuthPage({ theme, onNavigate, onSwitchUser }: Props) {
             id: `u_${Date.now()}`,
             name: name.trim(),
             email: cleanEmail,
-            role: 'student', // Starts as student until approved by admin
-            roleTitle: isTeacherReq ? 'Ученик (Заявка на учителя ⏳)' : 'Ученик',
+            role: 'student',
+            teacherPending: isTeacherReq,
+            roleTitle: isTeacherReq ? 'Статус не подтверждён ⏳' : 'Ученик',
             avatar: isTeacherReq ? '/images/avatar_teacher1.jpg' : '/images/avatar_teacher2.jpg',
             badgeColor: isTeacherReq ? 'badge-amber' : 'badge-blue',
             defaultPage: 'student-dashboard',
@@ -112,7 +113,7 @@ export default function AuthPage({ theme, onNavigate, onSwitchUser }: Props) {
 
           setSuccessMsg(
             isTeacherReq
-              ? 'Аккаунт создан! Заявка на статус Преподавателя отправлена на модерацию администратору.'
+              ? 'Аккаунт создан! Статус не подтверждён. Учительский кабинет недоступен до модерации администратором.'
               : 'Аккаунт успешно создан!'
           );
           setTimeout(() => {
