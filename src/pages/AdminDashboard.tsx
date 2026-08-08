@@ -29,6 +29,16 @@ export default function AdminDashboard({ theme, onNavigate }: Props) {
 
   const dark = theme === 'dark';
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowCreateModal(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const studentsList = mockUsers.filter(u => u.role === 'student' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));
   const teachersList = mockUsers.filter(u => u.role === 'teacher' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));
   const adminsList = mockUsers.filter(u => u.role === 'admin' && (u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())));

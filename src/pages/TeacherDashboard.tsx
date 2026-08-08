@@ -32,6 +32,17 @@ export default function TeacherDashboard({ theme, onNavigate }: Props) {
 
   const dark = theme === 'dark';
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowModal(false);
+        setEditingCourse(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleOpenEdit = (course: Course) => {
     setEditingCourse(course);
     setEditTitle(course.title);

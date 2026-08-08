@@ -147,8 +147,18 @@ export default function GlobalAiWidget({ theme }: Props) {
         setDropdownOpen(false);
       }
     };
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowAddModal(false);
+        setDropdownOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    window.addEventListener('keydown', keyHandler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      window.removeEventListener('keydown', keyHandler);
+    };
   }, []);
 
   const updateActiveSession = (updater: (s: ChatSession) => ChatSession) => {

@@ -176,7 +176,14 @@ export default function CatalogPage({ theme, onNavigate }: Props) {
     const interval = setInterval(() => {
       fetchLiveKgsRate().then(data => setRateData(data));
     }, 30000);
-    return () => clearInterval(interval);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedCourse(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   const filtered = useMemo(() => {
