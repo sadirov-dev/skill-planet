@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, BookOpen, Star, Plus, X, Send, Check, ChevronRight, TrendingUp, Upload, FileText, MessageSquare, Clock, Edit2, Play, Eye, HelpCircle } from 'lucide-react';
 import { mockSubmissions, mockTeachers, mockCourses, saveNewCourse } from '../data/mock';
 import type { Course } from '../types';

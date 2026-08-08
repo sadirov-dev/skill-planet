@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, BookOpen, DollarSign, TrendingUp, ShieldCheck, ShieldX, CheckCircle, XCircle, Search, Filter, Activity, GraduationCap, UserCheck, AlertTriangle, PhoneCall, Code2, Mail, MessageSquare, Send } from 'lucide-react';
 import { mockUsers, mockCourses, mockTeachers, mockActivityLogs, platformStats, saveNewCourse } from '../data/mock';
 import { Plus, X, Upload } from 'lucide-react';
