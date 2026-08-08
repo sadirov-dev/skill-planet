@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2, Sparkles, ChevronDown, Check, Plus, Key, Cpu, AlertCircle } from 'lucide-react';
+import { Bot, X, Send, Loader2, Sparkles, ChevronDown, Check, Plus, Key, Cpu, AlertCircle, Trash2 } from 'lucide-react';
 import { askAiAssistant, AI_MODELS, type AiModelId } from '../../services/aiService';
 
 interface Props {
@@ -16,6 +16,23 @@ interface CustomModel {
 }
 
 const CUSTOM_MODELS_KEY = 'skillplanet_custom_models_v3';
+const CHAT_HISTORY_KEY = 'skillplanet_chat_history';
+const CHAT_MODEL_KEY = 'skillplanet_chat_model';
+
+const DEFAULT_MSG = { role: 'ai' as const, text: 'Привет! Я ИИ-Ассистент SkillPlanet. Выберите модель из списка и задайте любой вопрос!' };
+
+function loadChatHistory(): { role: 'user' | 'ai'; text: string }[] {
+  try {
+    const saved = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+    return saved.length > 0 ? saved : [DEFAULT_MSG];
+  } catch {
+    return [DEFAULT_MSG];
+  }
+}
+
+function loadSavedModel(): string {
+  return localStorage.getItem(CHAT_MODEL_KEY) || 'llama3.3';
+}
 
 function loadCustomModels(): CustomModel[] {
   try {
@@ -31,13 +48,11 @@ function saveCustomModels(models: CustomModel[]) {
 
 export default function GlobalAiWidget({ theme }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [modelId, setModelId] = useState<string>('llama3.3');
+  const [modelId, setModelId] = useState<string>(loadSavedModel);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: 'Привет! Я ИИ-Ассистент SkillPlanet. Выберите модель из списка и задайте любой вопрос!' }
-  ]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>(loadChatHistory);
 
   // Modal state - ONLY 2 FIELDS: Name & API Key
   const [showAddModal, setShowAddModal] = useState(false);
@@ -57,9 +72,21 @@ export default function GlobalAiWidget({ theme }: Props) {
   const activeBadge = builtInModel?.badge ?? customModel?.badge ?? '🤖';
   const activeDesc = builtInModel?.description ?? customModel?.modelId ?? 'Своя модель';
 
+  // Persist messages to localStorage
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
   }, [messages]);
+
+  // Persist selected model
+  useEffect(() => {
+    localStorage.setItem(CHAT_MODEL_KEY, modelId);
+  }, [modelId]);
+
+  const clearChat = () => {
+    setMessages([DEFAULT_MSG]);
+    localStorage.removeItem(CHAT_HISTORY_KEY);
+  };
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -239,9 +266,14 @@ export default function GlobalAiWidget({ theme }: Props) {
                   <div style={s({ fontSize: 10, color: '#34d399', fontWeight: 600 })}>● Онлайн — {activeLabel}</div>
                 </div>
               </div>
-              <button onClick={() => setIsOpen(false)} style={s({ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a' })}>
-                <X size={18} />
-              </button>
+              <div style={s({ display: 'flex', alignItems: 'center', gap: 4 })}>
+                <button onClick={clearChat} title="Очистить чат" style={s({ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 4, borderRadius: 6, transition: 'color 0.15s' })} onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')} onMouseLeave={e => (e.currentTarget.style.color = '#71717a')}>
+                  <Trash2 size={15} />
+                </button>
+                <button onClick={() => setIsOpen(false)} style={s({ background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 4, borderRadius: 6 })}>
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             {/* Dropdown Selector */}
