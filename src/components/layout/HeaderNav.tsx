@@ -329,10 +329,10 @@ export default function HeaderNav({
                     </div>
 
                     <div style={{ fontSize: 10, fontWeight: 800, color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '2px 8px 6px' }}>
-                      Мои аккаунты (Instagram-style):
+                      Мои аккаунты:
                     </div>
 
-                    {/* Saved Accounts List (Instagram Style) */}
+                    {/* Saved Accounts List */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxHeight: 180, overflowY: 'auto' }}>
                       {savedAccounts.map(acc => {
                         const isSelected = acc.id === currentUser.id;
@@ -377,7 +377,7 @@ export default function HeaderNav({
                       })}
                     </div>
 
-                    {/* Instagram Style "+ Add Account" Button */}
+                    {/* "+ Add Account" Button */}
                     <div style={{ borderTop: `1px solid ${dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)'}`, marginTop: 8, paddingTop: 8 }}>
                       <button
                         onClick={() => setShowAddAccountModal(true)}
@@ -390,7 +390,7 @@ export default function HeaderNav({
                         }}
                       >
                         <UserPlus size={15} color="#60a5fa" />
-                        ➕ Добавить аккаунт (Instagram)
+                        ➕ Добавить аккаунт
                       </button>
                     </div>
 
